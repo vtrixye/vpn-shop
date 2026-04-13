@@ -22,7 +22,7 @@ async def on_startup():
         await create_db()
     except Exception as e:
         print(f"Не удалось подключиться к базе данных\n{e}")
-    sys.exit(1)
+        sys.exit(1)
     print("Бот запущен")
 
 
@@ -38,7 +38,7 @@ async def main():
     # middlewares
 
     await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types)
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 
 if __name__ == "__main__":
