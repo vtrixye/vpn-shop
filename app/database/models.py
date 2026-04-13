@@ -20,9 +20,3 @@ class User(Base):
     admin: Mapped[bool] = mapped_column(Boolean, default=False)
     blocked: Mapped[bool] = mapped_column(Boolean, default=False)
 
-    subs: Mapped[list["Subscription"]] = relationship(back_populates="user")
-
-
-class Subscription(Base):
-    """Subscription ~ User in Remnawave Api"""
-    pass
