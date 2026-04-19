@@ -1,48 +1,56 @@
 import os
 import sys
-import asyncio
+from contextlib import asynccontextmanager
 
-from aiogram import Bot, Dispatcher
+import uvicorn
 from dotenv import load_dotenv
+from fastapi import FastAPI
 
-from handlers import routers
-from database import create_db, session_maker
+from telegram import setup_webhook, setup_middlewares, shutdown_bot
+from webhooks import routers
+from database import create_db
+from utils.logger import get_logger
+
 
 load_dotenv()
 
-bot = Bot(token=os.getenv("TOKEN"))
-dp = Dispatcher()
+logger = get_logger(__name__)
+
+async def init_db():
+    try:
+        create_db()
+        logger.info("Database connected successfully")
+    except Exception as e:
+        logger.error(f"Failed to connect to database\n{e}")
+        raise
+
+async def init_bot():
+    try:
+        await setup_middlewares() 
+        await setup_webhook()
+        logger.info("Bot initialized successfully")
+    except Exception as e:
+        logger.error(f"Failed to initialize bot\n{e}")
+        raise
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    await init_db()
+    await init_bot()
+
+    yield
+    
+    await shutdown_bot()
+
+app = FastAPI(lifespan=lifespan)
 
 for router in routers:
-    dp.include_router(router)
+    app.include_router(router)
 
-
-async def on_startup():
-    try:
-        await create_db()
-    except Exception as e:
-        print(f"Не удалось подключиться к базе данных\n{e}")
-        sys.exit(1)
-    print("Бот запущен")
-
-
-async def on_shutdown():
-    await bot.session.close()
-    print("Бот завершил работу")
-
-
-async def main():
-    dp.startup.register(on_startup)
-    dp.shutdown.register(on_shutdown)
-
-    # middlewares
-
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
-
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
+    uvicorn.run(app, host="0.0.0.0", port=8000)
