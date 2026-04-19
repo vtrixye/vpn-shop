@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 async def init_db():
     try:
-        create_db()
+        await create_db()
         logger.info("Database connected successfully")
     except Exception as e:
         logger.error(f"Failed to connect to database\n{e}")
