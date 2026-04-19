@@ -6,4 +6,4 @@ start_router = Router()
 
 @start_router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer("Привет")
+    await message.answer("ПРИВЕТ ЭТО ПРОВЕРКА")
