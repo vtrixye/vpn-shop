@@ -1,4 +1,4 @@
-from .start import start_router
+from telegram.handlers.start import start_router
 
 routers = [
     start_router

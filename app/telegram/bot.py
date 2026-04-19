@@ -1,7 +1,7 @@
 import os
 from aiogram import Bot, Dispatcher
-from .handlers import routers
-from ..utils.logger import get_logger
+from telegram.handlers import routers
+from utils.logger import get_logger
 
 logger = get_logger(__name__)
 
