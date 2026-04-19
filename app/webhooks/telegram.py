@@ -1,7 +1,7 @@
 from fastapi import Request, APIRouter
 from aiogram import types
 from telegram.bot import bot, dp
-from utils.logger import get_logger
+from ..utils.logger import get_logger
 
 logger = get_logger(__name__)
 telegram_router = APIRouter(tags=["telegram"])

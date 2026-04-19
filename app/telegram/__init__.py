@@ -1,1 +1,1 @@
-from bot import setup_middlewares, shutdown_bot, setup_webhook
+from .bot import setup_middlewares, shutdown_bot, setup_webhook

@@ -1,15 +1,13 @@
-import os
-import sys
 from contextlib import asynccontextmanager
 
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 
-from telegram import setup_webhook, setup_middlewares, shutdown_bot
-from webhooks import routers
-from database import create_db
-from utils.logger import get_logger
+from .telegram import setup_webhook, setup_middlewares, shutdown_bot
+from .webhooks import routers
+from .database import create_db
+from .utils.logger import get_logger
 
 
 load_dotenv()
