@@ -3,6 +3,8 @@ from aiogram import Bot, Dispatcher
 from telegram.handlers import routers
 from utils.logger import get_logger
 from dotenv import load_dotenv
+from database import session_maker
+from telegram.middlewares import DataBaseSession
 
 load_dotenv()
 
@@ -16,7 +18,7 @@ for router in routers:
 
 async def setup_middlewares():
     
-    #middlewares
+    dp.update.middleware(DataBaseSession(session_maker))
 
     logger.info("Bot middlewares configured")
 
