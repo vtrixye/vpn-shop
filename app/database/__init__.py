@@ -1,7 +1,9 @@
 import os
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from database.models import Base
+from dotenv import load_dotenv
 
+load_dotenv()
 
 engine = create_async_engine(
     "postgresql+asyncpg://"
