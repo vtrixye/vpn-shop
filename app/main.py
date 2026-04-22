@@ -8,6 +8,7 @@ from telegram import setup_webhook, setup_middlewares, shutdown_bot
 from webhooks import routers
 from database import create_db
 from utils.logger import get_logger
+import webhooks.remnawave.handlers
 
 
 load_dotenv()
@@ -32,7 +33,7 @@ async def init_bot():
         raise
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan():
 
     await init_db()
     await init_bot()

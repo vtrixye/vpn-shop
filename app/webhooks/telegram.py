@@ -1,6 +1,6 @@
 from fastapi import Request, APIRouter
 from aiogram import types
-from telegram.bot import bot, dp
+from telegram import bot, dp
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
