@@ -33,7 +33,7 @@ async def init_bot():
         raise
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(app: FastAPI):
 
     await init_db()
     await init_bot()
