@@ -78,4 +78,6 @@ async def remnawave_webhook(payload=Depends(validate_webhook)):
         logger.exception(f"Error handling event: {event}")
         return {"ok": True}
 
+    logger.info("Remnawave webhook")
+
     return {"ok": True}
