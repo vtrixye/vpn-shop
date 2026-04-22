@@ -58,7 +58,7 @@ def remnawave_handler(event_name: str):
 
 remnawave_handler._handlers = {}
 
-@remnawave_router.post("/")
+@remnawave_router.post("")
 async def remnawave_webhook(payload=Depends(validate_webhook)):
     event = payload.get("event")
     data = payload.get("data", {})
