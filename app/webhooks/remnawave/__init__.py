@@ -3,6 +3,7 @@ import json
 import hmac
 import hashlib
 
+from datetime import datetime
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Request, HTTPException
 from remnawave.models.webhook import WebhookPayloadDto, UserDto, NodeDto
@@ -64,7 +65,18 @@ def remnawave_handler(event_name: str):
 
 remnawave_handler._handlers = {}
 
+def _normalize_datetime(obj):
+    if isinstance(obj, datetime):
+        return obj.replace(tzinfo=None)
+    elif isinstance(obj, dict):
+        return {k: _normalize_datetime(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_normalize_datetime(item) for item in obj]
+    return obj
+
 def _to_dto(event: str, data: dict):
+    data = _normalize_datetime(data)
+    
     if event.startswith("user."):
         return UserDto(**data)
     if event.startswith("node."):
