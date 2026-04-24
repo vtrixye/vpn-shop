@@ -81,7 +81,7 @@ async def update_sub(
     sub.user_id = user.telegram_id if user.telegram_id else DEFAULT_SUB_USER_ID
     sub.squads = user.active_internal_squads
 
-    await session.commit
+    await session.commit()
     logger.info(
         f"Подписка {sub.username} изменена"
     )
