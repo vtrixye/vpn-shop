@@ -55,8 +55,8 @@ async def create_sub(
         
         subscription_url=user.subscription_url,
 
-        user_id=DEFAULT_SUB_USER_ID
-        squads=squads,
+        user_id=DEFAULT_SUB_USER_ID,
+        squads=squads
     )
 
     if user.telegram_id is not None:
