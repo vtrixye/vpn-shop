@@ -14,9 +14,12 @@ async def user_created(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.modified")
 async def user_modified(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
+    logger.info("Modified handler")
     if sub is not None:
+        logger.info("Known sub")
         await update_sub(session=session, user=user)
     else:
+        logger.info("Unknown sub")
         await create_sub(session=session, user=user)
 
 @remnawave_handler("user.disabled")

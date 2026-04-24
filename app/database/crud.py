@@ -33,6 +33,8 @@ async def create_sub(
         user: Union[UserDto, CreateUserResponseDto]
     ) -> Subscription:
     
+    squads = [squad.uuid for squad in user.active_internal_squads]
+
     sub = Subscription(
         uuid=user.uuid,
         short_uuid=user.short_uuid,
@@ -54,7 +56,7 @@ async def create_sub(
         subscription_url=user.subscription_url,
         
         user_id=user.telegram_id if user.telegram_id else DEFAULT_SUB_USER_ID,
-        squads=user.active_internal_squads,
+        squads=squads,
     )
     
     session.add(sub)
@@ -79,7 +81,10 @@ async def update_sub(
     sub.tag = user.tag
     sub.hwid_device_limit = user.hwid_device_limit
     sub.user_id = user.telegram_id if user.telegram_id else DEFAULT_SUB_USER_ID
-    sub.squads = user.active_internal_squads
+
+    squads = [squad.uuid for squad in user.active_internal_squads]
+
+    sub.squads = squads
 
     await session.commit()
     logger.info(
