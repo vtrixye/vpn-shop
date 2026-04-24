@@ -5,8 +5,7 @@ import hashlib
 
 from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Request, HTTPException
-from remnawave.models.webhook import WebhookPayloadDto
-from remnawave.controllers.webhooks import WebhookUtility
+from remnawave.models.webhook import WebhookPayloadDto, UserDto, NodeDto
 
 from utils.logger import get_logger
 from database import session_maker
@@ -65,22 +64,27 @@ def remnawave_handler(event_name: str):
 
 remnawave_handler._handlers = {}
 
+def _to_dto(event: str, data: dict):
+    if event.startswith("user."):
+        return UserDto(**data)
+    if event.startswith("node."):
+        return NodeDto(**data)
+    return data
+
 @remnawave_router.post("")
 async def remnawave_webhook(payload=Depends(validate_webhook)):
     event = payload.get("event")
-
     if not event:
-        logger.warning("Webhook without event", extra={"payload": payload})
+        logger.warning("Webhook without event")
         return {"ok": False}
 
     handler = remnawave_handler._handlers.get(event)
-
     if not handler:
         return {"ok": True}
     
     try:
         parsed = WebhookPayloadDto(**payload)
-        typed_data = WebhookUtility.get_typed_data(parsed)
+        typed_data = _to_dto(event, parsed.data)
         await handler(typed_data)
     except Exception:
         logger.exception(f"Error handling event: {event}")
