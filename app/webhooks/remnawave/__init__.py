@@ -9,6 +9,7 @@ from remnawave.models.webhook import WebhookPayloadDto
 from remnawave.controllers.webhooks import WebhookUtility
 
 from utils.logger import get_logger
+from database import session_maker
 
 load_dotenv()
 
@@ -54,8 +55,12 @@ remnawave_router = APIRouter(
 
 def remnawave_handler(event_name: str):
     def decorator(func):
-        remnawave_handler._handlers[event_name] = func
-        return func
+        async def wrapper(*args, **kwargs):
+            async with session_maker() as session:
+                return await func(session=session, *args, **kwargs)
+        
+        remnawave_handler._handlers[event_name] = wrapper
+        return wrapper
     return decorator
 
 remnawave_handler._handlers = {}
