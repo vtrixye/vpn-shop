@@ -18,7 +18,9 @@ class BotLogger:
     EXCLUDED_PHRASES = [
         "message is not modified",
         "ServerDisconnectedError",
-        "Sleep for 1.000000 seconds and try again"
+        "Sleep for 1.000000 seconds and try again",
+        "POST /webhooks/telegram",
+        "POST /webhooks/remnawave"
     ]
     
     @classmethod
