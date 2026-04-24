@@ -54,10 +54,15 @@ async def create_sub(
         hwid_device_limit=user.hwid_device_limit,
         
         subscription_url=user.subscription_url,
-        
-        user_id=user.telegram_id if user.telegram_id else DEFAULT_SUB_USER_ID,
+
+        user_id=DEFAULT_SUB_USER_ID
         squads=squads,
     )
+
+    if user.telegram_id is not None:
+        user_tg = await session.get(User, user.telegram_id)
+        if  user_tg is not None:
+            sub.user_id = user.telegram_id
     
     session.add(sub)
     await session.commit()
@@ -80,12 +85,17 @@ async def update_sub(
     sub.description = user.description
     sub.tag = user.tag
     sub.hwid_device_limit = user.hwid_device_limit
-    sub.user_id = user.telegram_id if user.telegram_id else DEFAULT_SUB_USER_ID
+    sub.user_id = DEFAULT_SUB_USER_ID
 
     squads = [squad.uuid for squad in user.active_internal_squads]
 
     sub.squads = squads
-
+    
+    if user.telegram_id is not None:
+        user_tg = await session.get(User, user.telegram_id)
+        if  user_tg is not None:
+            sub.user_id = user.telegram_id
+    
     await session.commit()
     logger.info(
         f"Подписка {sub.username} изменена"
