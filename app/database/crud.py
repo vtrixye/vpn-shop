@@ -42,8 +42,8 @@ async def create_sub(
         traffic_limit_bytes=user.traffic_limit_bytes,
         traffic_limit_strategy=user.traffic_limit_strategy,
         
-        expire_at=user.expire_at,
-        created_at=user.created_at,
+        expire_at=user.expire_at.replace(tzinfo=None),
+        created_at=user.created_at.replace(tzinfo=None),
         
         email=user.email,
         description=user.description,
@@ -73,7 +73,7 @@ async def update_sub(
     sub.status = user.status
     sub.traffic_limit_bytes = user.traffic_limit_bytes
     sub.traffic_limit_strategy = user.traffic_limit_strategy
-    sub.expire_at = user.expire_at
+    sub.expire_at = user.expire_at.replace(tzinfo=None)
     sub.email = user.email
     sub.description = user.description
     sub.tag = user.tag
