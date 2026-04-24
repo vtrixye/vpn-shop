@@ -10,7 +10,7 @@ from remnawave.models import UserDto, CreateUserResponseDto
 
 load_dotenv()
 
-DEFAULT_SUB_USER_ID = os.getenv("")
+DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 logger = get_logger(__name__)
 
