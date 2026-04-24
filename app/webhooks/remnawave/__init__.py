@@ -55,9 +55,9 @@ remnawave_router = APIRouter(
 
 def remnawave_handler(event_name: str):
     def decorator(func):
-        async def wrapper(*args, **kwargs):
+        async def wrapper(data):
             async with session_maker() as session:
-                return await func(session=session, *args, **kwargs)
+                return await func(session, data)
         
         remnawave_handler._handlers[event_name] = wrapper
         return wrapper
