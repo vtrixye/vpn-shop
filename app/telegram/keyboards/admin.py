@@ -7,8 +7,10 @@ def admin_menu() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Пользователи", callback_data="users"),
-        InlineKeyboardButton(text="Ноды", callback_data="nodes")
+        InlineKeyboardButton(text="Пользователи", callback_data="users_menu"),
+        InlineKeyboardButton(text="Подписки", callback_data="subs_menu"),
+        InlineKeyboardButton(text="Ноды", callback_data="nodes_menu"),
+        InlineKeyboardButton(text="Назад", callback_data="main_menu")
     )
 
     return keyboard.as_markup()

@@ -1,11 +1,20 @@
+import os
+from dotenv import load_dotenv
 from remnawave.models.webhook import UserDto, NodeDto
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram import Bot
 
+from telegram.text import Text
+from telegram import bot
 from webhooks.remnawave import remnawave_handler
 from utils.logger import get_logger
 from database.crud import *
 
+load_dotenv()
+DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
+ADMIN_GROUP_ID= os.getenv("ADMIN_GROUP_ID")
 logger = get_logger(__name__)
+bot: Bot
 
 @remnawave_handler("user.created")
 async def user_created(session: AsyncSession, user: UserDto):
@@ -14,12 +23,9 @@ async def user_created(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.modified")
 async def user_modified(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
-    logger.info("Modified handler")
     if sub is not None:
-        logger.info("Known sub")
         await update_sub(session=session, user=user)
     else:
-        logger.info("Unknown sub")
         await create_sub(session=session, user=user)
 
 @remnawave_handler("user.disabled")
@@ -28,9 +34,36 @@ async def user_disabled(session: AsyncSession, user: UserDto):
     sub.status = "DISABLED"
     await session.commit()
 
-
 @remnawave_handler("user.enabled")
 async def user_enabled(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
     sub.status = "ACTIVE"
     await session.commit()
+
+@remnawave_handler("user.expired")
+async def user_expired(session: AsyncSession, user: UserDto):
+    sub = await session.get(Subscription, user.uuid)
+    if sub.user.id != DEFAULT_SUB_USER_ID:
+        text = Text.user_expired()
+        bot.send_message(chat_id=sub.user.id, text=text)
+    sub.status = "EXPIRED"
+    await session.commit()
+
+@remnawave_handler("user.expires_in_24_hours")
+async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
+    sub = await session.get(Subscription, user.uuid)
+    if sub.user.id != DEFAULT_SUB_USER_ID:
+        text = Text.user_expires_in_24_hours()
+        bot.send_message(chat_id=sub.user.id, text=text)
+    sub.status = "EXPIRED"
+    await session.commit()
+
+@remnawave_handler("node.connection_lost")
+async def node_connection_lost(node: NodeDto):
+    text = Text.node_connection_lost(node)
+    bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
+
+@remnawave_handler("node.connection_restored")
+async def node_connection_lost(node: NodeDto):
+    text = Text.node_connection_restored(node)
+    bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)

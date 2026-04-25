@@ -1,13 +1,16 @@
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import CommandStart
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
 from database.crud import *
+from telegram.text import Text
 import telegram.keyboards.users as kb
 
 start_router = Router()
+start_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 
 @start_router.message(CommandStart())
 async def cmd_start(message: Message, session: AsyncSession):
@@ -21,6 +24,6 @@ async def cmd_start(message: Message, session: AsyncSession):
             username=message.from_user.username
         )
     
-    text = "Главное меню"
+    text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=user.id)
     await message.answer(text=text, reply_markup=keyboard)
