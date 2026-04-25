@@ -45,7 +45,7 @@ async def user_expired(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
     if sub.user.id != DEFAULT_SUB_USER_ID:
         text = Text.user_expired()
-        bot.send_message(chat_id=sub.user.id, text=text)
+        await bot.send_message(chat_id=sub.user.id, text=text)
     sub.status = "EXPIRED"
     await session.commit()
 
@@ -54,16 +54,16 @@ async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
     if sub.user.id != DEFAULT_SUB_USER_ID:
         text = Text.user_expires_in_24_hours()
-        bot.send_message(chat_id=sub.user.id, text=text)
+        await bot.send_message(chat_id=sub.user.id, text=text)
     sub.status = "EXPIRED"
     await session.commit()
 
 @remnawave_handler("node.connection_lost")
 async def node_connection_lost(node: NodeDto):
     text = Text.node_connection_lost(node)
-    bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
+    await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
 
 @remnawave_handler("node.connection_restored")
 async def node_connection_lost(node: NodeDto):
     text = Text.node_connection_restored(node)
-    bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
+    await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)

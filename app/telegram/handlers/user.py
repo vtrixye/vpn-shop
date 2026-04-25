@@ -12,7 +12,7 @@ user_router = Router()
 user_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 user_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
-@user_router.callback_query(F.data == "main.menu")
+@user_router.callback_query(F.data == "main_menu")
 async def main_menu(callback: CallbackQuery, session: AsyncSession):
     text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=callback.from_user.id)
