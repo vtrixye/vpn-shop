@@ -43,18 +43,18 @@ async def user_enabled(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.expired")
 async def user_expired(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
-    if sub.user.id != DEFAULT_SUB_USER_ID:
+    if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expired()
-        await bot.send_message(chat_id=sub.user.id, text=text)
+        await bot.send_message(chat_id=sub.user_id, text=text)
     sub.status = "EXPIRED"
     await session.commit()
 
 @remnawave_handler("user.expires_in_24_hours")
 async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
-    if sub.user.id != DEFAULT_SUB_USER_ID:
+    if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expires_in_24_hours()
-        await bot.send_message(chat_id=sub.user.id, text=text)
+        await bot.send_message(chat_id=sub.user_id, text=text)
     sub.status = "EXPIRED"
     await session.commit()
 
