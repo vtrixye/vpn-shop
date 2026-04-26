@@ -25,5 +25,5 @@ async def cmd_start(message: Message, session: AsyncSession):
         )
     
     text = Text.main_menu()
-    keyboard = await kb.main_menu(session=session, id=user.id)
+    keyboard = await kb.main_menu(session=session, id=message.from_user.id)
     await message.answer(text=text, reply_markup=keyboard)
