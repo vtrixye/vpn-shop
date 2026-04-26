@@ -2,7 +2,9 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+
 from database.models import User, Subscription
+from utils.time import get_remaining_time
 
 async def main_menu(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
     user = await session.get(User, id)
@@ -45,10 +47,11 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
     for sub in subs.scalars():
 
         icon = "5416081784641168838" if sub.status == "ACTIVE" else "5411225014148014586"
+        time = get_remaining_time(sub.expire_at)
 
         keyboard.add(
             InlineKeyboardButton(
-                text=f"{sub.username}",
+                text=f"{sub.username} ({time})",
                 icon_custom_emoji_id=icon,
                 callback_data=f"get_sub_{sub.short_uuid}"
             )
