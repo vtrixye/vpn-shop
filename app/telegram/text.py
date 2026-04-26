@@ -7,6 +7,9 @@ class Text:
     def profile():
         return "Профиль"
     
+    def my_subs():
+        return "Мои подписки"
+    
     def admin_menu():
         return "Панель админа"
     
