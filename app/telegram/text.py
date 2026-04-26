@@ -4,6 +4,9 @@ class Text:
     def main_menu():
         return "Главное меню"
     
+    def profile():
+        return "Профиль"
+    
     def admin_menu():
         return "Панель админа"
     

@@ -18,3 +18,21 @@ async def main_menu(callback: CallbackQuery, session: AsyncSession):
     keyboard = await kb.main_menu(session=session, id=callback.from_user.id)
     await callback.message.edit_text(text=text, reply_markup=keyboard)
     await callback.answer()
+
+@user_router.callback_query(F.data == "profile")
+async def profile(callback: CallbackQuery, session: AsyncSession):
+    text = Text.profile()
+    keyboard = kb.profile()
+    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.answer()
+
+@user_router.callback_query(F.data == "my_subs")
+async def my_subs(callback: CallbackQuery, session: AsyncSession):
+    text = Text.my_subs()
+    keyboard = await kb.my_subs(session=session, id=callback.from_user.id)
+    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.answer()
+
+@user_router.callback_query()
+async def other(callback: CallbackQuery):
+    return await callback.answer("В разработке", show_alert=True)
