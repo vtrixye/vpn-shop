@@ -14,7 +14,9 @@ def get_remaining_time(expire_at: datetime) -> str:
     days = remaining.days
     hours = remaining.seconds // 3600
     
-    if days >= 1:
+    if days >= 10000:
+        return "безлимит"
+    elif 1 <= days < 10000:
         return f"{days} дн."
     else:
         return f"{hours} ч."
