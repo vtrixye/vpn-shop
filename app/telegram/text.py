@@ -22,7 +22,7 @@ class Text:
     def subs_control():
         return "Управление подписками"
     
-    def sub_create(data: dict = None):
+    def sub_create(data: dict = {}):
         
         username = data["username"] if data["username"] else "(не выбрано)"
         expire_at = data["expire_at"] if data["expire_at"] else "(не выбрано)"
