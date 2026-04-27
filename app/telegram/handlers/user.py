@@ -21,9 +21,9 @@ async def main_menu(callback: CallbackQuery, session: AsyncSession):
 
 @user_router.callback_query(F.data == "profile")
 async def profile(callback: CallbackQuery, session: AsyncSession):
-    text = Text.profile()
+    text = await Text.profile(session, callback.from_user.id)
     keyboard = kb.profile()
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
     await callback.answer()
 
 @user_router.callback_query(F.data == "my_subs")
