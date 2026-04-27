@@ -1,4 +1,10 @@
+import os
+from dotenv import load_dotenv
+
 from remnawave.models.webhook import NodeDto
+
+load_dotenv()
+DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
     def main_menu():
@@ -13,6 +19,25 @@ class Text:
     def admin_menu():
         return "Панель админа"
     
+    def subs_control():
+        return "Управление подписками"
+    
+    def sub_create(data: dict = None):
+        
+        username = data["username"] if data["username"] else "(не выбрано)"
+        expire_at = data["expire_at"] if data["expire_at"] else "(не выбрано)"
+        hwid = data["hwid"] if data["hwid"] else "0"
+        telegram = data["telegram"] if data["telegram"] else DEFAULT_SUB_USER_ID
+
+        return (
+            "Меню создания подписки\n\n"
+
+            f"username: {username}"
+            f"expire_at: {expire_at}"
+            f"hwid limit: {hwid}"
+            f"telegram id: {telegram}"
+        )
+
     def user_expired():
         return "Подписка истекла"
     
