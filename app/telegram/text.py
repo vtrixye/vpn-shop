@@ -15,7 +15,7 @@ class Text:
     
     async def profile(session: AsyncSession, id: int):
         user = await session.get(User, id)
-        stmt = select(func.count()).where(Subscription.user_id == id)
+        stmt = select(func.count()).where(Subscription.user_id == id, Subscription.status == "ACTIVE")
         sub_count = await session.scalar(stmt)
 
         return (
