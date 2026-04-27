@@ -24,10 +24,10 @@ class Text:
     
     def sub_create(data: dict = {}):
         
-        username = data["username"] if data["username"] else "(не выбрано)"
-        expire_at = data["expire_at"] if data["expire_at"] else "(не выбрано)"
-        hwid = data["hwid"] if data["hwid"] else "0"
-        telegram = data["telegram"] if data["telegram"] else DEFAULT_SUB_USER_ID
+        username = data.get("username") if data.get("username") else "(не выбрано)"
+        expire_at = data.get("expire_at") if data.get("expire_at") else "(не выбрано)"
+        hwid = data.get("hwid") if data.get("hwid") else "0"
+        telegram = data.get("telegram") if data.get("telegram") else DEFAULT_SUB_USER_ID
 
         return (
             "Меню создания подписки\n\n"
