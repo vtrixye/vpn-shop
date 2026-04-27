@@ -31,11 +31,12 @@ class Text:
 
         return (
             "Меню создания подписки\n\n"
-
+            "<blockquote>"
             f"username: {username}\n"
             f"Истекает через: {expire_at}\n"
             f"Устройства: {hwid}\n"
             f"Владелец: {telegram}\n"
+            "</blockquote>"
         )
 
     def user_expired():

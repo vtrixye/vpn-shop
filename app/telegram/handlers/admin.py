@@ -47,6 +47,6 @@ class CreateSubState(StatesGroup):
 async def sub_create(callback: CallbackQuery, state: FSMContext):
     text = Text.sub_create()
     keyboard = kb.sub_create()
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
     await callback.answer()
     await state.set_state(CreateSubState.edit)
