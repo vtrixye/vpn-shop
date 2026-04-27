@@ -32,9 +32,9 @@ def sub_create() -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Готово", icon_custom_emoji_id="5258513401784573443", callback_data="sub_ready"),
         InlineKeyboardButton(text="username", icon_custom_emoji_id="5879585266426973039", callback_data="set_username"),
-        InlineKeyboardButton(text="expire_at", icon_custom_emoji_id="5879585266426973039", callback_data="set_expire_at"),
-        InlineKeyboardButton(text="hwid limit", icon_custom_emoji_id="5879585266426973039", callback_data="set_hwid"),
-        InlineKeyboardButton(text="telegram id", icon_custom_emoji_id="5879585266426973039", callback_data="set_telegram"),
+        InlineKeyboardButton(text="Истекает через", icon_custom_emoji_id="5879585266426973039", callback_data="set_expire_at"),
+        InlineKeyboardButton(text="Устройства", icon_custom_emoji_id="5879585266426973039", callback_data="set_hwid"),
+        InlineKeyboardButton(text="Владелец", icon_custom_emoji_id="5879585266426973039", callback_data="set_telegram"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="subs_control")
     )
     keyboard.adjust(1, 1, 1, 1, 1, 1)

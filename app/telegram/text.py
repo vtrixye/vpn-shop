@@ -32,10 +32,10 @@ class Text:
         return (
             "Меню создания подписки\n\n"
 
-            f"username: {username}"
-            f"expire_at: {expire_at}"
-            f"hwid limit: {hwid}"
-            f"telegram id: {telegram}"
+            f"username: {username}\n"
+            f"Истекает через: {expire_at}\n"
+            f"Устройства: {hwid}\n"
+            f"Владелец: {telegram}\n"
         )
 
     def user_expired():
