@@ -37,7 +37,7 @@ class Text:
         result = await session.execute(
             select(
                 Subscription.status,
-                func.count(Subscription.id)
+                func.count(Subscription.uuid)
             )
             .group_by(Subscription.status)
         )
