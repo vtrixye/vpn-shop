@@ -32,9 +32,35 @@ class Text:
     
     def admin_menu():
         return "Панель админа"
-    
-    def subs_control():
-        return "Управление подписками"
+
+    async def subs_control(session: AsyncSession) -> str:
+        result = await session.execute(
+            select(
+                Subscription.status,
+                func.count(Subscription.id)
+            )
+            .group_by(Subscription.status)
+        )
+        
+        stats = {status: count for status, count in result.all()}
+        
+        total = sum(stats.values())
+        
+        active = stats.get("ACTIVE", 0)
+        expired = stats.get("EXPIRED", 0)
+        disabled = stats.get("DISABLED", 0)
+        
+        text = (
+            '<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> <b>Меню подписок</b>\n\n'
+            "<blockquote>"
+            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> Всего: {total}\n'
+            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ACTIVE: {active}\n'
+            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> EXPIRED: {expired}\n'
+            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> DISABLED: {disabled}'
+            "</blockquote>"
+        )
+        
+        return text
     
     def sub_create(data: dict = {}):
         

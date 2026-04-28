@@ -29,11 +29,11 @@ async def admin_menu(callback: CallbackQuery):
     await callback.answer()
 
 @admin_router.callback_query(F.data == "subs_control")
-async def subs_control(callback: CallbackQuery, state: FSMContext):
+async def subs_control(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
     await state.clear()
-    text = Text.subs_control()
+    text = await Text.subs_control(session)
     keyboard = kb.subs_control()
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
     await callback.answer()
 
 class CreateSubState(StatesGroup):
