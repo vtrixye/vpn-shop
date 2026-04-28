@@ -19,7 +19,6 @@ class Text:
         user = await session.get(User, id)
         stmt = select(func.count()).where(Subscription.user_id == id, Subscription.status == "ACTIVE")
         sub_count = await session.scalar(stmt)
-        now = now_moscow()
 
         return (
             "Профиль\n\n"
@@ -27,7 +26,6 @@ class Text:
             f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ID: {id}\n'
             f'<tg-emoji emoji-id="5769403330761593044">🛂</tg-emoji> Баланс: {user.balance}\n'
             f'<tg-emoji emoji-id="5778335621491723621">🛂</tg-emoji> Активные подписки: {sub_count}\n'
-            f'{now.hour}:{now.minute}:{now.second}'
             "</blockquote>"
         )
     
@@ -53,6 +51,7 @@ class Text:
         active = stats.get("ACTIVE", 0)
         expired = stats.get("EXPIRED", 0)
         disabled = stats.get("DISABLED", 0)
+        now = now_moscow()
         
         text = (
             '<b>Меню подписок</b>\n\n'
@@ -61,6 +60,7 @@ class Text:
             f'<tg-emoji emoji-id="5416081784641168838">🛂</tg-emoji> ACTIVE: {active}\n'
             f'<tg-emoji emoji-id="5411225014148014586">🛂</tg-emoji> EXPIRED: {expired}\n'
             f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}'
+            f'{now.hour:02d}:{now.minute:02d}:{now.second:02d}'
             "</blockquote>"
         )
         
