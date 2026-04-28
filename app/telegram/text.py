@@ -59,7 +59,7 @@ class Text:
             f'<tg-emoji emoji-id="5203993413346680064">🛂</tg-emoji> Всего: {total}\n'
             f'<tg-emoji emoji-id="5416081784641168838">🛂</tg-emoji> ACTIVE: {active}\n'
             f'<tg-emoji emoji-id="5411225014148014586">🛂</tg-emoji> EXPIRED: {expired}\n'
-            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}'
+            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}\n'
             f'{now.hour:02d}:{now.minute:02d}:{now.second:02d}'
             "</blockquote>"
         )
