@@ -51,12 +51,12 @@ class Text:
         disabled = stats.get("DISABLED", 0)
         
         text = (
-            '<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> <b>Меню подписок</b>\n\n'
+            '<b>Меню подписок</b>\n\n'
             "<blockquote>"
-            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> Всего: {total}\n'
-            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ACTIVE: {active}\n'
-            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> EXPIRED: {expired}\n'
-            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> DISABLED: {disabled}'
+            f'<tg-emoji emoji-id="5203993413346680064">🛂</tg-emoji> Всего: {total}\n'
+            f'<tg-emoji emoji-id="5416081784641168838">🛂</tg-emoji> ACTIVE: {active}\n'
+            f'<tg-emoji emoji-id="5411225014148014586">🛂</tg-emoji> EXPIRED: {expired}\n'
+            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}'
             "</blockquote>"
         )
         
@@ -72,10 +72,10 @@ class Text:
         return (
             "Меню создания подписки\n\n"
             "<blockquote>"
-            f"username: {username}\n"
-            f"Истекает через: {expire_at}\n"
-            f"Устройства: {hwid}\n"
-            f"Владелец: {telegram}\n"
+            f'<tg-emoji emoji-id="5814247475141153332">🛂</tg-emoji> username: {username}\n'
+            f'<tg-emoji emoji-id="5776213190387961618">🛂</tg-emoji> Истекает через: {expire_at}\n'
+            f'<tg-emoji emoji-id="5877318502947229960">🛂</tg-emoji> Устройства: {hwid}\n'
+            f'<tg-emoji emoji-id="5879770735999717115">🛂</tg-emoji> Владелец: {telegram}\n'
             "</blockquote>"
         )
 
