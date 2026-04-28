@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 def get_remaining_time(expire_at: datetime) -> str:
     now = datetime.now(timezone.utc)
@@ -20,3 +21,6 @@ def get_remaining_time(expire_at: datetime) -> str:
         return f"{days} дн."
     else:
         return f"{hours} ч."
+
+def now_moscow():
+    return datetime.now(ZoneInfo("Europe/Moscow"))

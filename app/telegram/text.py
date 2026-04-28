@@ -1,10 +1,12 @@
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from remnawave.models.webhook import NodeDto
 from sqlalchemy import select, func
 
 from database.models import User, Subscription
+from utils.time import now_moscow
 
 load_dotenv()
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
@@ -17,6 +19,7 @@ class Text:
         user = await session.get(User, id)
         stmt = select(func.count()).where(Subscription.user_id == id, Subscription.status == "ACTIVE")
         sub_count = await session.scalar(stmt)
+        now = now_moscow()
 
         return (
             "Профиль\n\n"
@@ -24,6 +27,7 @@ class Text:
             f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ID: {id}\n'
             f'<tg-emoji emoji-id="5769403330761593044">🛂</tg-emoji> Баланс: {user.balance}\n'
             f'<tg-emoji emoji-id="5778335621491723621">🛂</tg-emoji> Активные подписки: {sub_count}\n'
+            f'{now.hour}:{now.minute}:{now.second}'
             "</blockquote>"
         )
     
