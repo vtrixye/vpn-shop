@@ -19,11 +19,12 @@ def subs_control() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
+        InlineKeyboardButton(text="Обновить", icon_custom_emoji_id="5258420634785947640", callback_data="subs_control"),
         InlineKeyboardButton(text="Создать подписку", icon_custom_emoji_id="5274008024585871702", callback_data="sub_create"),
         InlineKeyboardButton(text="Поиск", icon_custom_emoji_id="5874960879434338403", callback_data="sub_search"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="admin_menu")
     )
-    keyboard.adjust(1, 1, 1)
+    keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
 def sub_create() -> InlineKeyboardMarkup:
