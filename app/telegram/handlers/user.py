@@ -40,7 +40,7 @@ async def trial_sub(callback: CallbackQuery):
     await callback.answer()
     await rw.create_user(
         username="testhandler", expire_at=datetime.now() + timedelta(days=30), 
-        telegram_id=callback.from_user.id, tag="trial"
+        telegram_id=callback.from_user.id, tag="TRIAL"
         )
     text = Text.trial_sub()
     keyboard = kb.trial_sub()
