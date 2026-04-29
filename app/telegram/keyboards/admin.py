@@ -40,3 +40,12 @@ def sub_create() -> InlineKeyboardMarkup:
     )
     keyboard.adjust(1, 1, 1, 1, 1, 1)
     return keyboard.as_markup()
+
+def set_username() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Отмена", icon_custom_emoji_id="5258236805890710909", callback_data="sub_create_state")
+    )
+
+    return keyboard.as_markup()

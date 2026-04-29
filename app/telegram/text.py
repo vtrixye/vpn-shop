@@ -64,10 +64,10 @@ class Text:
     
     def sub_create(data: dict = {}):
         
-        username = data.get("username") if data.get("username") else "(не выбрано)"
-        expire_at = data.get("expire_at") if data.get("expire_at") else "(не выбрано)"
-        hwid = data.get("hwid") if data.get("hwid") else "0"
-        telegram = data.get("telegram") if data.get("telegram") else DEFAULT_SUB_USER_ID
+        username = data.get("username", "(не выбрано)")
+        expire_at = data.get("expire_at", "(не выбрано)")
+        hwid = data.get("hwid", "0")
+        telegram = data.get("telegram", DEFAULT_SUB_USER_ID)
 
         return (
             "Меню создания подписки\n\n"
@@ -78,6 +78,9 @@ class Text:
             f'<tg-emoji emoji-id="5879770735999717115">🛂</tg-emoji> Владелец: {telegram}\n'
             "</blockquote>"
         )
+    
+    def set_username():
+        return "Введите username"
 
     def user_expired():
         return "Подписка истекла"

@@ -1,4 +1,4 @@
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -58,3 +58,33 @@ async def sub_create(callback: CallbackQuery, state: FSMContext):
     keyboard = kb.sub_create()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
     await state.set_state(CreateSubState.edit)
+
+@admin_router.callback_query(F.data == "sub_create_state")
+async def sub_create_state(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+    text = Text.sub_create(data)
+    keyboard = kb.sub_create()
+    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+
+@admin_router.callback_query(F.data == "set_username")
+async def set_username(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    text = Text.set_username()
+    keyboard = kb.set_username()
+    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await state.update_data(mes_id = callback.message.message_id)
+    await state.set_state(CreateSubState.username)
+
+@admin_router.message(CreateSubState.username, F.text)
+async def username_state(message: Message, state: FSMContext, bot: Bot):
+    await state.update_data(username=message.text)
+    data = await state.get_data()
+    text = Text.sub_create(data)
+    keyboard = kb.sub_create()
+    await message.delete()
+    await bot.edit_message_text(chat_id=message.chat.id, message_id=data.get("mes_id"), 
+                                text=text, reply_markup=keyboard, parse_mode="HTML")
+    await state.set_state(CreateSubState.edit)
+
+    
