@@ -36,7 +36,7 @@ async def subs_control(callback: CallbackQuery, state: FSMContext, session: Asyn
     text = await Text.subs_control(session)
     keyboard = kb.subs_control()
     try:
-        await callback.message.edit_text(text=text, keyboard=keyboard, parse_mode="HTML")
+        await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
     except TelegramBadRequest as e:
         if "message is not modified" in str(e).lower():
             pass
