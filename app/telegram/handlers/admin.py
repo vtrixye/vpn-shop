@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 
 from telegram.filters import ChatTypeFilter, IsAdmin
 from database.models import User
@@ -23,18 +24,25 @@ async def cmd_admin(message: Message):
 
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):
+    await callback.answer()
     text = Text.admin_menu()
     keyboard = kb.admin_menu()
     await callback.message.edit_text(text=text, reply_markup=keyboard)
-    await callback.answer()
 
 @admin_router.callback_query(F.data == "subs_control")
 async def subs_control(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
+    await callback.answer()
     await state.clear()
     text = await Text.subs_control(session)
     keyboard = kb.subs_control()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
-    await callback.answer()
+    try:
+        await callback.message.edit_text(text=text, keyboard=keyboard, parse_mode="HTML")
+    except TelegramBadRequest as e:
+        if "message is not modified" in str(e).lower():
+            pass
+        else:
+            raise
+
 
 class CreateSubState(StatesGroup):
     edit = State()
@@ -45,8 +53,8 @@ class CreateSubState(StatesGroup):
 
 @admin_router.callback_query(F.data == "sub_create")
 async def sub_create(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
     text = Text.sub_create()
     keyboard = kb.sub_create()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
-    await callback.answer()
     await state.set_state(CreateSubState.edit)

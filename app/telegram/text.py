@@ -1,12 +1,10 @@
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from remnawave.models.webhook import NodeDto
 from sqlalchemy import select, func
 
 from database.models import User, Subscription
-from utils.time import now_moscow
 
 load_dotenv()
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
@@ -51,7 +49,6 @@ class Text:
         active = stats.get("ACTIVE", 0)
         expired = stats.get("EXPIRED", 0)
         disabled = stats.get("DISABLED", 0)
-        now = now_moscow()
         
         text = (
             '<b>Меню подписок</b>\n\n'
@@ -59,8 +56,7 @@ class Text:
             f'<tg-emoji emoji-id="5203993413346680064">🛂</tg-emoji> Всего: {total}\n'
             f'<tg-emoji emoji-id="5416081784641168838">🛂</tg-emoji> ACTIVE: {active}\n'
             f'<tg-emoji emoji-id="5411225014148014586">🛂</tg-emoji> EXPIRED: {expired}\n'
-            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}\n'
-            f'{now.hour:02d}:{now.minute:02d}:{now.second:02d}'
+            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}'
             "</blockquote>"
         )
         

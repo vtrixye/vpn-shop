@@ -14,24 +14,24 @@ user_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
 @user_router.callback_query(F.data == "main_menu")
 async def main_menu(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
     text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=callback.from_user.id)
     await callback.message.edit_text(text=text, reply_markup=keyboard)
-    await callback.answer()
 
 @user_router.callback_query(F.data == "profile")
 async def profile(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
     text = await Text.profile(session, callback.from_user.id)
     keyboard = kb.profile()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
-    await callback.answer()
 
 @user_router.callback_query(F.data == "my_subs")
 async def my_subs(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
     text = Text.my_subs()
     keyboard = await kb.my_subs(session=session, id=callback.from_user.id)
     await callback.message.edit_text(text=text, reply_markup=keyboard)
-    await callback.answer()
 
 @user_router.callback_query()
 async def other(callback: CallbackQuery):
