@@ -21,7 +21,8 @@ async def create_user(session: AsyncSession, id: int, name: str, username: str =
         username=username,
         balance=0,
         admin=False,
-        blocked=False
+        blocked=False,
+        trial=True
     )
     session.add(user)
     await session.commit()

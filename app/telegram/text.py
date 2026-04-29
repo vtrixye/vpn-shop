@@ -13,17 +13,22 @@ class Text:
     def main_menu():
         return "Главное меню"
     
+    def trial_sub():
+        return (
+            "Вы активировали пробную подписку на одни сутки!\n\n"
+        )
+
     async def profile(session: AsyncSession, id: int):
         user = await session.get(User, id)
         stmt = select(func.count()).where(Subscription.user_id == id, Subscription.status == "ACTIVE")
         sub_count = await session.scalar(stmt)
 
         return (
-            "Профиль\n\n"
+            "<b>Профиль</b>\n\n"
             "<blockquote>"
             f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ID: {id}\n'
-            f'<tg-emoji emoji-id="5769403330761593044">🛂</tg-emoji> Баланс: {user.balance}\n'
-            f'<tg-emoji emoji-id="5778335621491723621">🛂</tg-emoji> Активные подписки: {sub_count}\n'
+            f'<tg-emoji emoji-id="5769403330761593044">💳</tg-emoji> Баланс: {user.balance}\n'
+            f'<tg-emoji emoji-id="5778335621491723621">🟢</tg-emoji> Активные подписки: {sub_count}\n'
             "</blockquote>"
         )
     
@@ -53,10 +58,10 @@ class Text:
         text = (
             '<b>Меню подписок</b>\n\n'
             "<blockquote>"
-            f'<tg-emoji emoji-id="5203993413346680064">🛂</tg-emoji> Всего: {total}\n'
-            f'<tg-emoji emoji-id="5416081784641168838">🛂</tg-emoji> ACTIVE: {active}\n'
-            f'<tg-emoji emoji-id="5411225014148014586">🛂</tg-emoji> EXPIRED: {expired}\n'
-            f'<tg-emoji emoji-id="5240241223632954241">🛂</tg-emoji> DISABLED: {disabled}'
+            f'<tg-emoji emoji-id="5203993413346680064">📊</tg-emoji> Всего: {total}\n'
+            f'<tg-emoji emoji-id="5416081784641168838">🟢</tg-emoji> ACTIVE: {active}\n'
+            f'<tg-emoji emoji-id="5411225014148014586">🔴</tg-emoji> EXPIRED: {expired}\n'
+            f'<tg-emoji emoji-id="5240241223632954241">🔘</tg-emoji> DISABLED: {disabled}'
             "</blockquote>"
         )
         
@@ -70,12 +75,12 @@ class Text:
         telegram = data.get("telegram", DEFAULT_SUB_USER_ID)
 
         return (
-            "Меню создания подписки\n\n"
+            "<b>Меню создания подписки</b>\n\n"
             "<blockquote>"
             f'<tg-emoji emoji-id="5814247475141153332">🛂</tg-emoji> username: {username}\n'
-            f'<tg-emoji emoji-id="5776213190387961618">🛂</tg-emoji> Истекает через: {expire_at}\n'
-            f'<tg-emoji emoji-id="5877318502947229960">🛂</tg-emoji> Устройства: {hwid}\n'
-            f'<tg-emoji emoji-id="5879770735999717115">🛂</tg-emoji> Владелец: {telegram}\n'
+            f'<tg-emoji emoji-id="5776213190387961618">🕘</tg-emoji> Истекает через: {expire_at}\n'
+            f'<tg-emoji emoji-id="5877318502947229960">💻</tg-emoji> Устройства: {hwid}\n'
+            f'<tg-emoji emoji-id="5879770735999717115">🚹</tg-emoji> Владелец: {telegram}\n'
             "</blockquote>"
         )
     

@@ -9,6 +9,7 @@ from webhooks import routers
 from database import create_db
 from utils.logger import get_logger
 import webhooks.remnawave.handlers
+from services.remnawave_service import init_remnawave
 
 
 load_dotenv()
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI):
 
     await init_db()
     await init_bot()
+    init_remnawave()
 
     yield
     

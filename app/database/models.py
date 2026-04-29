@@ -21,6 +21,7 @@ class User(Base):
 
     admin: Mapped[bool] = mapped_column(Boolean, default=False)
     blocked: Mapped[bool] = mapped_column(Boolean, default=False)
+    trial: Mapped[bool] = mapped_column(Boolean, default=True)
 
     subscriptions: Mapped[List["Subscription"]] = relationship("Subscription", back_populates="user")
 
@@ -45,7 +46,7 @@ class Subscription(Base):
 
     email: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     description: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
-    tag: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    tag: Mapped[Optional[str]] = mapped_column(String(16), nullable=True)
 
     hwid_device_limit: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
 
