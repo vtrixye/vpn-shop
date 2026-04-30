@@ -35,7 +35,7 @@ async def create_user(
     if isinstance(username, UsernameType):
         if username in (UsernameType.TEST, UsernameType.TRIAL) and tag is None:
             tag = username.name
-        username = rand.generate_username(username)
+        username = await rand.generate_username(username)
 
     if isinstance(expire_at, ExpireType):
         expire_at = time.get_expiration_time(expire_at)
