@@ -7,7 +7,7 @@ from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
 from database.crud import *
 from telegram.text import Text
-import telegram.keyboards.users as kb
+import telegram.keyboards.user as kb
 
 start_router = Router()
 start_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
