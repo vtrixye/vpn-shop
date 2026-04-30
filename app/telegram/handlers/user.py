@@ -42,14 +42,10 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
 async def trial_sub(callback: CallbackQuery):
     await callback.answer()
 
-    logger.info("Вызываем функцию create_user")
-
     await rw.create_user(
         username="testhandler", expire_at=datetime.now() + timedelta(days=30), 
         telegram_id=callback.from_user.id, tag="TRIAL"
         )
-    
-    logger.info("Функция create_user выполнена")
 
     text = Text.trial_sub()
     keyboard = kb.trial_sub()

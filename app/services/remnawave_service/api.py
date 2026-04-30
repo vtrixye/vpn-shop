@@ -35,16 +35,6 @@ async def create_user(
     if active_internal_squads is None:
         active_internal_squads = [DEFAULT_INTERNAL_SQUAD]
 
-    logger.info("Создание DTO")
-
-    logger.info(f"username: {username}, type: {type(username)}")
-    logger.info(f"expire_at: {expire_at}, type: {type(expire_at)}")
-    logger.info(f"description: {description}, type: {type(description)}")
-    logger.info(f"tag: {tag}, type: {type(tag)}")
-    logger.info(f"telegram_id: {telegram_id}, type: {type(telegram_id)}")
-    logger.info(f"hwid_device_limit: {hwid_device_limit}, type: {type(hwid_device_limit)}")
-    logger.info(f"active_internal_squads: {active_internal_squads}, type: {type(active_internal_squads)}")
-
     user = CreateUserRequestDto(
         username=username,
         expire_at=expire_at,
@@ -55,9 +45,5 @@ async def create_user(
         active_internal_squads=active_internal_squads
     )
 
-    logger.info("Пробуем создать пользователя")
-    try:
-        await remnawave.users.create_user(body=user)
-    except Exception as e:
-        logger.error(f"Ошибка: {e}")
+    await remnawave.users.create_user(body=user)
     logger.info(f"Отправлен запрос на создание пользователя {username}")

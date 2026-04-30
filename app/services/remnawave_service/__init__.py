@@ -1,5 +1,4 @@
 import os
-from functools import lru_cache
 from typing import Optional
 from dotenv import load_dotenv
 from remnawave import RemnawaveSDK
@@ -17,7 +16,7 @@ def init_remnawave() -> RemnawaveSDK:
     if _remnawave is not None:
         return _remnawave
     
-    base_url = os.getenv("BASE_URL")
+    base_url = os.getenv("PANEL_URL")
     token = os.getenv("REMNAWAVE_TOKEN")
     
     if not base_url:
