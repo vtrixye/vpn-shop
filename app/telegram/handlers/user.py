@@ -9,6 +9,9 @@ from database.crud import *
 from telegram.text import Text
 import telegram.keyboards.users as kb
 import services.remnawave_service.api as rw
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 user_router = Router()
 user_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
@@ -38,10 +41,16 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
 @user_router.callback_query(F.data == "trial_sub")
 async def trial_sub(callback: CallbackQuery):
     await callback.answer()
+
+    logger.info("Вызываем функцию create_user")
+
     await rw.create_user(
         username="testhandler", expire_at=datetime.now() + timedelta(days=30), 
         telegram_id=callback.from_user.id, tag="TRIAL"
         )
+    
+    logger.info("Функция create_user выполнена")
+
     text = Text.trial_sub()
     keyboard = kb.trial_sub()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
