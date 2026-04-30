@@ -9,6 +9,7 @@ from telegram import bot
 from webhooks.remnawave import remnawave_handler
 from utils.logger import get_logger
 from database.crud import *
+from database.models import User, Subscription
 
 load_dotenv()
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
@@ -18,7 +19,7 @@ bot: Bot
 
 @remnawave_handler("user.created")
 async def user_created(session: AsyncSession, user: UserDto):
-    await create_sub(session=session, user=user)
+    sub = await create_sub(session=session, user=user)
 
 @remnawave_handler("user.modified")
 async def user_modified(session: AsyncSession, user: UserDto):

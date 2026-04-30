@@ -1,5 +1,6 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
+from services.remnawave_service.enums import ExpireType
 
 def get_remaining_time(expire_at: datetime) -> str:
     now = datetime.now(timezone.utc)
@@ -21,6 +22,17 @@ def get_remaining_time(expire_at: datetime) -> str:
         return f"{days} дн."
     else:
         return f"{hours} ч."
+    
+def get_expiration_time(period: ExpireType):
+    periods = {
+            ExpireType.DAY: timedelta(days=1),
+            ExpireType.WEEK: timedelta(weeks=1),
+            ExpireType.MONTH: timedelta(days=30),
+            ExpireType.THREE_MONTHS: timedelta(days=90),
+            ExpireType.SIX_MONTHS: timedelta(days=180),
+            ExpireType.YEAR: timedelta(days=365),
+        }
+    return datetime.now() + periods[period]
 
 def now_moscow():
     return datetime.now(ZoneInfo("Europe/Moscow"))

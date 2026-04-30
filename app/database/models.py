@@ -35,8 +35,8 @@ class Subscription(Base):
         primary_key=True, 
         default=uuid_lib.uuid4
     )
-    short_uuid: Mapped[str] = mapped_column(String(36))
-    username: Mapped[str] = mapped_column(String(100))
+    short_uuid: Mapped[str] = mapped_column(String(36), unique=True)
+    username: Mapped[str] = mapped_column(String(100), unique=True)
     status: Mapped[str] = mapped_column(String(20))
 
     traffic_limit_bytes: Mapped[int] = mapped_column(BigInteger, default=0)
