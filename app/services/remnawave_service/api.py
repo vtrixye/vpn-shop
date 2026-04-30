@@ -37,6 +37,14 @@ async def create_user(
 
     logger.info("Создание DTO")
 
+    logger.info(f"username: {username}, type: {type(username)}")
+    logger.info(f"expire_at: {expire_at}, type: {type(expire_at)}")
+    logger.info(f"description: {description}, type: {type(description)}")
+    logger.info(f"tag: {tag}, type: {type(tag)}")
+    logger.info(f"telegram_id: {telegram_id}, type: {type(telegram_id)}")
+    logger.info(f"hwid_device_limit: {hwid_device_limit}, type: {type(hwid_device_limit)}")
+    logger.info(f"active_internal_squads: {active_internal_squads}, type: {type(active_internal_squads)}")
+
     user = CreateUserRequestDto(
         username=username,
         expire_at=expire_at,
