@@ -31,18 +31,24 @@ async def user_modified(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.disabled")
 async def user_disabled(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
+    if sub is None:
+        return
     sub.status = "DISABLED"
     await session.commit()
 
 @remnawave_handler("user.enabled")
 async def user_enabled(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
+    if sub is None:
+        return
     sub.status = "ACTIVE"
     await session.commit()
 
 @remnawave_handler("user.expired")
 async def user_expired(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
+    if sub is None:
+        return
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expired()
         await bot.send_message(chat_id=sub.user_id, text=text)
@@ -52,6 +58,8 @@ async def user_expired(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.expires_in_24_hours")
 async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
+    if sub is None:
+        return
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expires_in_24_hours()
         await bot.send_message(chat_id=sub.user_id, text=text)
@@ -59,11 +67,11 @@ async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     await session.commit()
 
 @remnawave_handler("node.connection_lost")
-async def node_connection_lost(node: NodeDto):
+async def node_connection_lost(session: AsyncSession, node: NodeDto):
     text = Text.node_connection_lost(node)
     await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
 
 @remnawave_handler("node.connection_restored")
-async def node_connection_lost(node: NodeDto):
+async def node_connection_restored(session: AsyncSession, node: NodeDto):
     text = Text.node_connection_restored(node)
     await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)

@@ -1,7 +1,7 @@
 import os
 import uuid as uuid_lib
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto
 from dotenv import load_dotenv
 from services.remnawave_service import get_remnawave
@@ -19,7 +19,7 @@ async def create_user(
         expire_at: datetime,
         description: Optional[str] = None,
         tag: Optional[str] = None,
-        telegram_id: Optional[str] = DEFAULT_SUB_USER_ID,
+        telegram_id: Union[str, int, None] = DEFAULT_SUB_USER_ID,
         hwid_device_limit: Optional[int] = 2,
         active_internal_squads: Optional[List[uuid_lib.UUID]] = None
 ) -> UserResponseDto:
@@ -45,5 +45,5 @@ async def create_user(
         active_internal_squads=active_internal_squads
     )
 
-    create_user = await remnawave.users.create_user(body=user)
-    return create_user
+    await remnawave.users.create_user(body=user)
+    logger.info(f"Отправлен запрос на создание пользователя {username}")
