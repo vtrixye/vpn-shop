@@ -48,6 +48,8 @@ async def create_user(
     )
 
     logger.info("Пробуем создать пользователя")
-
-    await remnawave.users.create_user(body=user)
+    try:
+        await remnawave.users.create_user(body=user)
+    except Exception as e:
+        logger.error(f"Ошибка: {e}")
     logger.info(f"Отправлен запрос на создание пользователя {username}")
