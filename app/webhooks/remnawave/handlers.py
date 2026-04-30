@@ -58,6 +58,8 @@ async def user_expired(session: AsyncSession, user: UserDto):
 
 @remnawave_handler("user.expires_in_24_hours")
 async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
+    if user.tag == "TRIAL":
+        return
     sub = await session.get(Subscription, user.uuid)
     if sub is None:
         return

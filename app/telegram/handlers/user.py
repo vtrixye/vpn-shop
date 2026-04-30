@@ -1,7 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
@@ -9,6 +8,7 @@ from database.crud import *
 from telegram.text import Text
 import telegram.keyboards.user as kb
 import services.remnawave_service.api as rw
+from services.remnawave_service.enums import UsernameType, ExpireType
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -43,14 +43,14 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
 
     await rw.create_user(
-        username="testhandler", expire_at=datetime.now() + timedelta(days=30), 
-        telegram_id=callback.from_user.id, tag="TRIAL"
+        username=UsernameType.TRIAL, expire_at=ExpireType.DAY, 
+        telegram_id=callback.from_user.id
         )
 
     user = await session.get(User, callback.from_user.id)
     user.trial = False
     await session.commit()
-    
+
     text = Text.trial_sub()
     keyboard = kb.trial_sub()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
