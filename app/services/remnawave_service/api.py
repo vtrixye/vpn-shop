@@ -1,6 +1,6 @@
 import os
 import uuid as uuid_lib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto
 from dotenv import load_dotenv
@@ -40,7 +40,7 @@ async def create_user(
     if isinstance(expire_at, ExpireType):
         expire_at = time.get_expiration_time(expire_at)
     elif isinstance(expire_at, timedelta):
-        expire_at = datetime.now() + expire_at
+        expire_at = datetime.now(timezone.utc) + expire_at
 
     telegram_id = int(telegram_id)
 

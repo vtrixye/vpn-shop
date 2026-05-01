@@ -22,6 +22,12 @@ async def cmd_admin(message: Message):
     keyboard = kb.admin_menu()
     await message.answer(text=text, reply_markup=keyboard)
 
+@admin_router.message(Command("test"))
+async def cmd_test(message: Message):
+    text = "test"
+    keyboard = kb.test()
+    await message.answer(text=text, reply_markup=keyboard)
+
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):
     await callback.answer()
