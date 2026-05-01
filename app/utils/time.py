@@ -1,5 +1,20 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from services.remnawave_service.enums import ExpireType
+
+MSK = timezone(timedelta(hours=3))
+
+def utc_to_msk(dt: datetime | None) -> datetime | None:
+    """Конвертирует UTC datetime в naive MSK datetime"""
+    if dt is None:
+        return None
+        
+    if dt.tzinfo is not None:
+        dt_msk = dt.astimezone(MSK)
+        return dt_msk.replace(tzinfo=None)
+    
+    dt_utc = dt.replace(tzinfo=timezone.utc)
+    dt_msk = dt_utc.astimezone(MSK)
+    return dt_msk.replace(tzinfo=None)
 
 def get_remaining_time(expire_at: datetime) -> str:
     now = datetime.now()
@@ -28,4 +43,4 @@ def get_expiration_time(period: ExpireType):
             ExpireType.SIX_MONTHS: timedelta(days=180),
             ExpireType.YEAR: timedelta(days=365),
         }
-    return datetime.now() + periods[period]
+    return datetime.now(timezone.utc) + periods[period]
