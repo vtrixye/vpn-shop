@@ -3,8 +3,7 @@ from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import User, Subscription
 from utils.logger import get_logger
-from datetime import datetime
-from typing import Optional, Union
+from typing import Union
 from remnawave.models import UserDto, CreateUserResponseDto
 
 
@@ -45,8 +44,8 @@ async def create_sub(
         traffic_limit_bytes=user.traffic_limit_bytes,
         traffic_limit_strategy=user.traffic_limit_strategy,
         
-        expire_at=user.expire_at.replace(tzinfo=None),
-        created_at=user.created_at.replace(tzinfo=None),
+        expire_at=user.expire_at,
+        created_at=user.created_at,
         
         email=user.email,
         description=user.description,
@@ -81,7 +80,7 @@ async def update_sub(
     sub.status = user.status
     sub.traffic_limit_bytes = user.traffic_limit_bytes
     sub.traffic_limit_strategy = user.traffic_limit_strategy
-    sub.expire_at = user.expire_at.replace(tzinfo=None)
+    sub.expire_at = user.expire_at
     sub.email = user.email
     sub.description = user.description
     sub.tag = user.tag

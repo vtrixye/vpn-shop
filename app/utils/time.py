@@ -1,12 +1,8 @@
-from datetime import datetime, timezone, timedelta
-from zoneinfo import ZoneInfo
+from datetime import datetime, timedelta
 from services.remnawave_service.enums import ExpireType
 
 def get_remaining_time(expire_at: datetime) -> str:
-    now = datetime.now(timezone.utc)
-    
-    if expire_at.tzinfo is None:
-        expire_at = expire_at.replace(tzinfo=timezone.utc)
+    now = datetime.now()
     
     remaining = expire_at - now
     
@@ -33,6 +29,3 @@ def get_expiration_time(period: ExpireType):
             ExpireType.YEAR: timedelta(days=365),
         }
     return datetime.now() + periods[period]
-
-def now_moscow():
-    return datetime.now(ZoneInfo("Europe/Moscow"))

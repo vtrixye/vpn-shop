@@ -21,6 +21,15 @@ bot: Bot
 async def user_created(session: AsyncSession, user: UserDto):
     sub = await create_sub(session=session, user=user)
 
+@remnawave_handler("user.deleted")
+async def user_deleted(session: AsyncSession, user: UserDto):
+    sub = await session.get(Subscription, user.uuid)
+    if sub is None:
+        return
+    await session.delete(sub)
+    await session.commit()
+    logger.info(f"Удалена подписка {sub.username}")
+
 @remnawave_handler("user.modified")
 async def user_modified(session: AsyncSession, user: UserDto):
     sub = await session.get(Subscription, user.uuid)
