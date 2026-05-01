@@ -43,8 +43,8 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
 
     await rw.create_user(
-        username=UsernameType.TRIAL, expire_at=ExpireType.DAY, 
-        telegram_id=callback.from_user.id
+        username=UsernameType.TRIAL, expire_at=ExpireType.DAY,
+        tag="TRIAL", telegram_id=callback.from_user.id
         )
 
     user = await session.get(User, callback.from_user.id)

@@ -66,8 +66,6 @@ async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expires_in_24_hours()
         await bot.send_message(chat_id=sub.user_id, text=text)
-    sub.status = "EXPIRED"
-    await session.commit()
 
 @remnawave_handler("node.connection_lost")
 async def node_connection_lost(session: AsyncSession, node: NodeDto):
