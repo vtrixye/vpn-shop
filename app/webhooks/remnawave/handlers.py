@@ -4,6 +4,7 @@ from remnawave.models.webhook import UserDto, NodeDto
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
 
+import telegram.keyboards.user as kb
 from telegram.text import Text
 from telegram import bot
 from webhooks.remnawave import remnawave_handler
@@ -61,7 +62,8 @@ async def user_expired(session: AsyncSession, user: UserDto):
         return
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expired()
-        await bot.send_message(chat_id=sub.user_id, text=text)
+        keyboard = kb.delete_button()
+        await bot.send_message(chat_id=sub.user_id, text=text, reply_markup=keyboard)
     sub.status = "EXPIRED"
     await session.commit()
 
@@ -73,8 +75,9 @@ async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     if sub is None:
         return
     if sub.user_id != DEFAULT_SUB_USER_ID:
-        text = Text.user_expires_in_24_hours()
-        await bot.send_message(chat_id=sub.user_id, text=text)
+        text = Text.user_expires_in_24_hours(sub)
+        keyboard = kb.delete_button()
+        await bot.send_message(chat_id=sub.user_id, text=text, reply_markup=keyboard)
 
 @remnawave_handler("node.connection_lost")
 async def node_connection_lost(session: AsyncSession, node: NodeDto):

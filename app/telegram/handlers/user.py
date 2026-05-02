@@ -55,6 +55,11 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
     keyboard = kb.trial_sub()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
 
+@user_router.callback_query(F.data == "delete_message")
+async def delete_message(callback: CallbackQuery):
+    await callback.answer()
+    await callback.message.delete()
+
 @user_router.callback_query()
 async def other(callback: CallbackQuery):
     return await callback.answer("В разработке", show_alert=True)

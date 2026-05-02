@@ -87,11 +87,11 @@ class Text:
     def set_username():
         return "Введите username"
 
-    def user_expired():
-        return "Подписка истекла"
+    def user_expired(sub: Subscription):
+        return f"Подписка {sub.username} истекла"
     
-    def user_expires_in_24_hours():
-        return "Подписка истекает через сутки"
+    def user_expires_in_24_hours(sub: Subscription):
+        return f"Подписка {sub.username} истекает через сутки"
     
     def node_connection_lost(node: NodeDto):
         text = (

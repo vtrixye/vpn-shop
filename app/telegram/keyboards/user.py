@@ -74,3 +74,12 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
     keyboard.adjust(1, 1, 1, 1, 1)
 
     return keyboard.as_markup()
+
+def delete_button(text = "OK"):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text=text, icon_custom_emoji_id="5260416304224936047", callback_data="delete_message")
+    )
+    
+    return keyboard.as_markup()
