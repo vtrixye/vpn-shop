@@ -61,7 +61,7 @@ async def user_expired(session: AsyncSession, user: UserDto):
     if sub is None:
         return
     if sub.user_id != DEFAULT_SUB_USER_ID:
-        text = Text.user_expired()
+        text = Text.user_expired(sub)
         keyboard = kb.delete_button()
         await bot.send_message(chat_id=sub.user_id, text=text, reply_markup=keyboard)
     sub.status = "EXPIRED"
