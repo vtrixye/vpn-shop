@@ -11,7 +11,7 @@ DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
     def main_menu():
-        return "Главное меню"
+        return "Главное меню 52"
     
     def trial_sub():
         return (
