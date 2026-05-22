@@ -2,11 +2,8 @@ import os
 from aiogram import Bot, Dispatcher
 from telegram.handlers import routers
 from utils.logger import get_logger
-from dotenv import load_dotenv
 from database import session_maker
 from telegram.middlewares import DataBaseSession
-
-load_dotenv()
 
 logger = get_logger(__name__)
 

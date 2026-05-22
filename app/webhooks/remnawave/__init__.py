@@ -3,14 +3,11 @@ import json
 import hmac
 import hashlib
 
-from dotenv import load_dotenv
 from fastapi import APIRouter, Depends, Request, HTTPException
 from remnawave.models.webhook import WebhookPayloadDto, UserDto, NodeDto
 
 from utils.logger import get_logger
 from database import session_maker
-
-load_dotenv()
 
 logger = get_logger(__name__)
 

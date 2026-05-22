@@ -1,5 +1,4 @@
 import os
-from dotenv import load_dotenv
 from remnawave.models.webhook import UserDto, NodeDto
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
@@ -12,7 +11,6 @@ from utils.logger import get_logger
 from database.crud import *
 from database.models import User, Subscription
 
-load_dotenv()
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 ADMIN_GROUP_ID= os.getenv("ADMIN_GROUP_ID")
 logger = get_logger(__name__)

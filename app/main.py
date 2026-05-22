@@ -1,7 +1,8 @@
-from contextlib import asynccontextmanager
+from dotenv import load_dotenv
+load_dotenv()
 
 import uvicorn
-from dotenv import load_dotenv
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from telegram import setup_webhook, setup_middlewares, shutdown_bot
@@ -10,9 +11,7 @@ from database import create_db
 from utils.logger import get_logger
 import webhooks.remnawave.handlers
 from services.remnawave_service import init_remnawave
-
-
-load_dotenv()
+from services.cryptopay_service import init_cryptopay
 
 logger = get_logger(__name__)
 
@@ -39,6 +38,7 @@ async def lifespan(app: FastAPI):
     await init_db()
     await init_bot()
     init_remnawave()
+    init_cryptopay(app=app)
 
     yield
     

@@ -1,6 +1,5 @@
 import os
 from datetime import timezone, timedelta
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import User, Subscription
 from utils.logger import get_logger
@@ -8,11 +7,7 @@ from utils.time import utc_to_msk
 from typing import Union
 from remnawave.models import UserDto, CreateUserResponseDto
 
-
-load_dotenv()
-
 DEFAULT_SUB_USER_ID = int(os.getenv("DEFAULT_SUB_USER_ID"))
-
 
 logger = get_logger(__name__)
 

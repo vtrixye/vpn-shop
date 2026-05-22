@@ -3,7 +3,6 @@ import uuid as uuid_lib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto
-from dotenv import load_dotenv
 
 from services.remnawave_service import get_remnawave
 from services.remnawave_service.enums import UsernameType, ExpireType
@@ -12,7 +11,6 @@ from utils import rand
 from utils import time
 
 logger = get_logger(__name__)
-load_dotenv()
 
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 if not DEFAULT_SUB_USER_ID:

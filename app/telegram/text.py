@@ -1,12 +1,10 @@
 import os
-from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 from remnawave.models.webhook import NodeDto
 from sqlalchemy import select, func
 
 from database.models import User, Subscription
 
-load_dotenv()
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
