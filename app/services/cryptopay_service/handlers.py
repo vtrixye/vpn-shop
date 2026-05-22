@@ -1,11 +1,14 @@
 from aiogram import Bot
 from telegram import bot
+from aiosend import WebhookRouter
 from aiosend.types import Invoice
-from services.cryptopay_service import cp, PaymentData
+from services.cryptopay_service import PaymentData
 
 bot: Bot
 
-@cp.invoice_paid(PaymentData.filter())
+router = WebhookRouter()
+
+@router.invoice_paid(PaymentData.filter())
 async def handle_payment(
     invoice: Invoice,
     payload: PaymentData
