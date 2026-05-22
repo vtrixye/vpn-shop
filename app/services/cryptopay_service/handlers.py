@@ -8,7 +8,7 @@ router = WebhookRouter()
 async def handle_payment(invoice: Invoice) -> None:
     from telegram import bot
     
-    payload = PaymentData.from_payload(invoice.payload)
+    payload = PaymentData.unpack(invoice.payload)
     
     await bot.edit_message_text(
         chat_id=payload.chat_id,
