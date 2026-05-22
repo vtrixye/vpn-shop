@@ -20,7 +20,7 @@ async def get_invoice(message: Message) -> None:
     )
     cp = get_cryptopay()
     invoice = await cp.create_invoice(
-        amount=100,
+        amount=50,
         currency_type="fiat",
         fiat="RUB",
         accepted_assets=["USDT", "TON"],

@@ -4,12 +4,11 @@ from services.cryptopay_service.models import PaymentData
 
 router = WebhookRouter()
 
-@router.invoice_paid(PaymentData.filter())
-async def handle_payment(
-    invoice: Invoice,
-    payload: PaymentData
-) -> None:
+@router.invoice_paid()
+async def handle_payment(invoice: Invoice) -> None:
     from telegram import bot
+    
+    payload = PaymentData.from_payload(invoice.payload)
     
     await bot.edit_message_text(
         chat_id=payload.chat_id,
