@@ -34,11 +34,11 @@ async def init_bot():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-
+    
+    init_remnawave()
     init_cryptopay(app=app)
     await init_db()
     await init_bot()
-    init_remnawave()
 
     yield
     
