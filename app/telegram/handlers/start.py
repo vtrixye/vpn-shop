@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.types import Message
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, CommandObject
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from telegram.filters import ChatTypeFilter, IsBlocked
@@ -13,7 +13,9 @@ start_router = Router()
 start_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 
 @start_router.message(CommandStart())
-async def cmd_start(message: Message, session: AsyncSession):
+async def cmd_start(message: Message, session: AsyncSession, command: CommandObject):
+    if command.args:
+        return await message.answer(text=f"args: {command.args}")
     user = await session.get(User, message.from_user.id)
 
     if user is None:
