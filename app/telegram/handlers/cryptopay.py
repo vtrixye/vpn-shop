@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message
 
-from services.cryptopay_service import cp
+from services.cryptopay_service import get_cryptopay
 from services.cryptopay_service.models import PaymentData
 from telegram.filters import ChatTypeFilter, IsBlocked
 from utils.logger import get_logger
@@ -18,6 +18,7 @@ async def get_invoice(message: Message) -> None:
         chat_id=message.chat.id,
         message_id=message.message_id
     )
+    cp = get_cryptopay()
     invoice = await cp.create_invoice(
         amount=100,
         currency_type="fiat",

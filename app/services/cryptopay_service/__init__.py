@@ -20,3 +20,7 @@ def init_cryptopay(app: FastAPI):
 
     cp.include_router(router=router)
 
+def get_cryptopay() -> CryptoPay:
+    if cp is None:
+        raise ValueError("CryptoPay не инициализирован")
+    return cp
