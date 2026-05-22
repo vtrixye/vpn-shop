@@ -1,6 +1,6 @@
 import os
 from fastapi import FastAPI
-from aiosend import CryptoPay, TESTNET, PayloadData
+from aiosend import CryptoPay, TESTNET
 from aiosend.webhook import FastAPIManager
 from services.cryptopay_service.handlers import router
 
@@ -20,6 +20,3 @@ def init_cryptopay(app: FastAPI):
 
     cp.include_router(router=router)
 
-class PaymentData(PayloadData, prefix="payment"):
-    chat_id: int
-    message_id: int

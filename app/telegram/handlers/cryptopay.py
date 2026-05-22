@@ -1,7 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message
 
-from services.cryptopay_service import cp, PaymentData
+from services.cryptopay_service import cp
+from services.cryptopay_service.models import PaymentData
 from telegram.filters import ChatTypeFilter, IsBlocked
 from utils.logger import get_logger
 

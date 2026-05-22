@@ -1,6 +1,6 @@
 from aiosend import WebhookRouter
 from aiosend.types import Invoice
-from services.cryptopay_service import PaymentData
+from services.cryptopay_service.models import PaymentData
 
 router = WebhookRouter()
 
