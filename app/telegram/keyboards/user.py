@@ -1,5 +1,5 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -83,3 +83,19 @@ def delete_button(text = "OK"):
     )
     
     return keyboard.as_markup()
+
+def get_reply_button(
+    button_text: str = "test_invoice",
+    resize: bool = True,
+    one_time: bool = True,
+    placeholder: str = None
+) -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text=button_text)]
+        ],
+        resize_keyboard=resize,
+        one_time_keyboard=one_time,
+        input_field_placeholder=placeholder
+    )
+    return kb

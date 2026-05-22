@@ -15,7 +15,7 @@ start_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 @start_router.message(CommandStart())
 async def cmd_start(message: Message, session: AsyncSession, command: CommandObject):
     if command.args:
-        return await message.answer(text=f"args: {command.args}")
+        return await message.answer(text="test", reply_markup=kb.get_reply_button())
     user = await session.get(User, message.from_user.id)
 
     if user is None:
