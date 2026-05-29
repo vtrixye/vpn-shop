@@ -102,3 +102,15 @@ class Text:
             f"Восстановлено соединение с нодой {node.name}"
         )
         return text
+    
+    def invoice_created(invoice):
+        text = (
+            f"Оплатите счет на сумму {invoice.amount} {invoice.fiat} по ссылке ниже"
+        )
+        return text
+    
+    def invoice_paid():
+        text = (
+            "Тестовая оплата прошла успешно"
+        )
+        return text
