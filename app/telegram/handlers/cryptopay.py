@@ -1,6 +1,8 @@
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 
+from telegram.text import Text
+from telegram.keyboards import cryptopay as kb
 from services.cryptopay_service import get_cryptopay
 from services.cryptopay_service.models import PaymentData
 from telegram.filters import ChatTypeFilter, IsBlocked
@@ -12,12 +14,15 @@ cryptopay_router = Router()
 cryptopay_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 cryptopay_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
-@cryptopay_router.message(F.text == "test_invoice")
-async def get_invoice(message: Message) -> None:
+@cryptopay_router.callback_query(F.data == "create_invoice")
+async def create_invoice_handler(callback: CallbackQuery) -> None:
+    await callback.answer()
+    
     payload = PaymentData(
-        chat_id=message.chat.id,
-        message_id=message.message_id
+        chat_id=callback.message.chat.id,
+        message_id=callback.message.message_id
     )
+    
     cp = get_cryptopay()
     invoice = await cp.create_invoice(
         amount=50,
@@ -27,5 +32,12 @@ async def get_invoice(message: Message) -> None:
         description="test description",
         hidden_message="test hidden message",
         payload=payload.pack()
-        )
-    await message.answer(f"pay: {invoice.mini_app_invoice_url}")
+    )
+
+    text = Text.invoice_created(invoice)
+    keyboard = kb.cryptopay_invoice(invoice.mini_app_invoice_url)
+    
+    await callback.message.edit_text(
+        text=text,
+        reply_markup=keyboard
+    )

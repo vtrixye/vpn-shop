@@ -15,13 +15,6 @@ def admin_menu() -> InlineKeyboardMarkup:
     keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
-def test() -> InlineKeyboardMarkup:
-    keyboard = InlineKeyboardBuilder()
-
-    keyboard.add(InlineKeyboardButton(text="test", url="happ://crypt4/Z1OOWHo/kMQcWcaxFY9ydf7Xrn1Npttxy8NMH/ibbj1Bez44PqmWamd+WVd2LbTVB4DCvylIoBmjz4VWFP4Noa9dFHmyaDEdc0/2lsKwj3s+8w5OfX6rLCwp7L/hxXmy9XA7Ei/w77XZlr8DR9BYtkfk7x8cl2VevLiA1Mgkx5U4gmc8Q1AXr9w1muDT5KJTkTfb6v1qnzzutDsgbrme1dWrTVB8Bwz+E02zfziTTvezslN61AmPp0Xp7MTLjKydexBipSooADXm9+1oOnghxC8VlABKFwCTkud4F8igQm9CX+3pE/2xB6dTe3OZcJY683lne0MAnu+bmhJkt4+MLAF40N8IG+9d0+e33pjpEV84EriB3O2m+JYvpR7JVw6aQrldPkkcHMG1MK+deke02/g843y7Qan3n8BmZsk23XWWepXxUyBU4EXbHyJljllPQdTjeSaW+YSOD8tA2cC0bbsOkWohkR6nNBp+sdWc3CVOl/SLmGzGouEQS9gOxe/Y+0pJziTvvHsQ2bW8BVyucodyDdRHR6SB3Epq6mEQ2rMI/3Uzxm0f0IgGHFcxvNrY0VIubpEeOoK5gLfqDoFEJ+dLpyKlUr0FEaifXUPIqO5uYEYXkOxrprGLjLI3/Ks/V+QW4ltn0IMibMxAfC5au9bwzpmOnuqMDFIkToW5OCc="))
-
-    return keyboard.as_markup()
-
 def subs_control() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
