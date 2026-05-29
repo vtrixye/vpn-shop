@@ -5,7 +5,7 @@ from telegram.handlers.cryptopay import cryptopay_router
 
 routers = [
     start_router,
-    admin_router, 
-    user_router,
-    cryptopay_router
+    admin_router,
+    cryptopay_router,
+    user_router
 ]
