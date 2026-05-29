@@ -14,7 +14,7 @@ cryptopay_router = Router()
 cryptopay_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 cryptopay_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
-@cryptopay_router.callback_query(F.data == "create_invoice")
+@cryptopay_router.callback_query(F.data == "balance")
 async def create_invoice_handler(callback: CallbackQuery) -> None:
     await callback.answer()
     
