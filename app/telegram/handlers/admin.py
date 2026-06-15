@@ -24,7 +24,10 @@ admin_router.callback_query.filter(ChatTypeFilter(['private', 'group']), IsAdmin
 async def cmd_admin(message: Message):
     text = Text.admin_menu()
     keyboard = kb.admin_menu()
-    await message.answer(text=text, reply_markup=keyboard)
+    await message.answer_rich(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @admin_router.message(Command("test"))
 async def cmd_test(message: Message):
@@ -75,7 +78,10 @@ async def admin_menu(callback: CallbackQuery):
     await callback.answer()
     text = Text.admin_menu()
     keyboard = kb.admin_menu()
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @admin_router.callback_query(F.data == "subs_control")
 async def subs_control(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
@@ -84,7 +90,10 @@ async def subs_control(callback: CallbackQuery, state: FSMContext, session: Asyn
     text = await Text.subs_control(session)
     keyboard = kb.subs_control()
     try:
-        await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+        await callback.message.edit_text(
+            rich_message=InputRichMessage(markdown=text),
+            reply_markup=keyboard
+        )
     except TelegramBadRequest as e:
         if "message is not modified" in str(e).lower():
             pass
@@ -104,7 +113,10 @@ async def sub_create(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     text = Text.sub_create()
     keyboard = kb.sub_create()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
     await state.set_state(CreateSubState.edit)
 
 @admin_router.callback_query(F.data == "sub_create_state")
@@ -113,14 +125,20 @@ async def sub_create_state(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     text = Text.sub_create(data)
     keyboard = kb.sub_create()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @admin_router.callback_query(F.data == "set_username")
 async def set_username(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     text = Text.set_username()
     keyboard = kb.set_username()
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
     await state.update_data(mes_id = callback.message.message_id)
     await state.set_state(CreateSubState.username)
 
@@ -131,8 +149,9 @@ async def username_state(message: Message, state: FSMContext, bot: Bot):
     text = Text.sub_create(data)
     keyboard = kb.sub_create()
     await message.delete()
-    await bot.edit_message_text(chat_id=message.chat.id, message_id=data.get("mes_id"), 
-                                text=text, reply_markup=keyboard, parse_mode="HTML")
+    await bot.edit_message_text(
+        chat_id=message.chat.id, message_id=data.get("mes_id"),
+        rich_message=InputRichMessage(markdown=text))
     await state.set_state(CreateSubState.edit)
 
     

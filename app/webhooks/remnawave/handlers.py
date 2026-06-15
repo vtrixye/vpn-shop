@@ -2,6 +2,7 @@ import os
 from remnawave.models.webhook import UserDto, NodeDto
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram import Bot
+from aiogram.types import InputRichMessage
 
 import telegram.keyboards.user as kb
 from telegram.text import Text
@@ -12,7 +13,7 @@ from database.crud import *
 from database.models import User, Subscription
 
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
-ADMIN_GROUP_ID= os.getenv("ADMIN_GROUP_ID")
+ADMIN_GROUP_ID= int(os.getenv("ADMIN_GROUP_ID"))
 logger = get_logger(__name__)
 bot: Bot
 
@@ -61,7 +62,11 @@ async def user_expired(session: AsyncSession, user: UserDto):
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expired(sub)
         keyboard = kb.delete_button()
-        await bot.send_message(chat_id=sub.user_id, text=text, reply_markup=keyboard)
+        await bot.send_rich_message(
+            chat_id=sub.user_id,
+            rich_message=InputRichMessage(markdown=text),
+            reply_markup=keyboard
+        )
     sub.status = "EXPIRED"
     await session.commit()
 
@@ -75,14 +80,24 @@ async def user_expires_in_24_hours(session: AsyncSession, user: UserDto):
     if sub.user_id != DEFAULT_SUB_USER_ID:
         text = Text.user_expires_in_24_hours(sub)
         keyboard = kb.delete_button()
-        await bot.send_message(chat_id=sub.user_id, text=text, reply_markup=keyboard)
+        await bot.send_rich_message(
+            chat_id=sub.user_id,
+            rich_message=InputRichMessage(markdown=text),
+            reply_markup=keyboard
+        )
 
 @remnawave_handler("node.connection_lost")
 async def node_connection_lost(session: AsyncSession, node: NodeDto):
     text = Text.node_connection_lost(node)
-    await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
+    await bot.send_rich_message(
+            chat_id=ADMIN_GROUP_ID,
+            rich_message=InputRichMessage(markdown=text)
+        )
 
 @remnawave_handler("node.connection_restored")
 async def node_connection_restored(session: AsyncSession, node: NodeDto):
     text = Text.node_connection_restored(node)
-    await bot.send_message(chat_id=ADMIN_GROUP_ID, text=text)
+    await bot.send_rich_message(
+            chat_id=ADMIN_GROUP_ID,
+            rich_message=InputRichMessage(markdown=text)
+        )

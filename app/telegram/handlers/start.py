@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, InputRichMessage
 from aiogram.filters import CommandStart, CommandObject
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,4 +28,7 @@ async def cmd_start(message: Message, session: AsyncSession, command: CommandObj
     
     text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=message.from_user.id)
-    await message.answer(text=text, reply_markup=keyboard)
+    await message.answer_rich(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )

@@ -9,11 +9,12 @@ DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
     def main_menu():
-        return "Главное меню 52"
+        return "## Главное меню"
     
     def trial_sub():
         return (
-            "Вы активировали пробную подписку на одни сутки!\n\n"
+            "🎉 **Пробный период активирован!**\n\n"
+            "Вы успешно получили доступ на **одни сутки**."
         )
 
     async def profile(session: AsyncSession, id: int):
@@ -22,19 +23,17 @@ class Text:
         sub_count = await session.scalar(stmt)
 
         return (
-            "<b>Профиль</b>\n\n"
-            "<blockquote>"
-            f'<tg-emoji emoji-id="5936017305585586269">🛂</tg-emoji> ID: {id}\n'
-            f'<tg-emoji emoji-id="5769403330761593044">💳</tg-emoji> Баланс: {user.balance}\n'
-            f'<tg-emoji emoji-id="5778335621491723621">🟢</tg-emoji> Активные подписки: {sub_count}\n'
-            "</blockquote>"
+            "## 👤 Профиль\n\n"
+            f'* ![🛂](tg://emoji?id=5936017305585586269) **ID:** `{id}`\n'
+            f'* ![💳](tg://emoji?id=5769403330761593044) **Баланс:** `{user.balance} ₽`\n'
+            f'* ![🟢](tg://emoji?id=5778335621491723621) **Активные подписки:** `{sub_count}`'
         )
     
     def my_subs():
-        return "Мои подписки"
+        return "## 📦 Мои подписки\n\nСписок ваших активных и завершенных подписок:"
     
     def admin_menu():
-        return "Панель админа"
+        return "## 🛠 Панель админа\n\nУправление системой и пользователями:"
 
     async def subs_control(session: AsyncSession) -> str:
         result = await session.execute(
@@ -54,15 +53,15 @@ class Text:
         disabled = stats.get("DISABLED", 0)
         
         text = (
-            '<b>Меню подписок</b>\n\n'
-            "<blockquote>"
-            f'<tg-emoji emoji-id="5203993413346680064">📊</tg-emoji> Всего: {total}\n'
-            f'<tg-emoji emoji-id="5416081784641168838">🟢</tg-emoji> ACTIVE: {active}\n'
-            f'<tg-emoji emoji-id="5411225014148014586">🔴</tg-emoji> EXPIRED: {expired}\n'
-            f'<tg-emoji emoji-id="5240241223632954241">🔘</tg-emoji> DISABLED: {disabled}'
-            "</blockquote>"
+            '## 📊 Статистика подписок\n\n'
+            '| Статус | Количество |\n'
+            '| :--- | :---: |\n'
+            f'| ![📊](tg://emoji?id=5203993413346680064) **Всего** | `{total}` |\n'
+            f'| ![🟢](tg://emoji?id=5416081784641168838) **ACTIVE** | `{active}` |\n'
+            f'| ![🔴](tg://emoji?id=5411225014148014586) **EXPIRED** | `{expired}` |\n'
+            f'| ![🔘](tg://emoji?id=5240241223632954241) **DISABLED** | `{disabled}` |'
         )
-        
+      
         return text
     
     def sub_create(data: dict = {}):
@@ -73,56 +72,40 @@ class Text:
         telegram = data.get("telegram", DEFAULT_SUB_USER_ID)
 
         return (
-            "<b>Меню создания подписки</b>\n\n"
-            "<blockquote>"
-            f'<tg-emoji emoji-id="5814247475141153332">🛂</tg-emoji> username: {username}\n'
-            f'<tg-emoji emoji-id="5776213190387961618">🕘</tg-emoji> Истекает через: {expire_at}\n'
-            f'<tg-emoji emoji-id="5877318502947229960">💻</tg-emoji> Устройства: {hwid}\n'
-            f'<tg-emoji emoji-id="5879770735999717115">🚹</tg-emoji> Владелец: {telegram}\n'
-            "</blockquote>"
+            "## 📝 Создание подписки\n\n"
+            f'> ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`\n'
+            f'> ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`\n'
+            f'> ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`\n'
+            f'> ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
         )
     
     def set_username():
-        return "Введите username"
+        return "✏️ **Введите username:**"
 
     def user_expired(sub: Subscription):
-        return f"Подписка {sub.username} истекла"
+        return f"❌ **Подписка истекла**\n\nВремя действия подписки `{sub.username}` подошло к концу."
     
     def user_expires_in_24_hours(sub: Subscription):
-        return f"Подписка {sub.username} истекает через сутки"
+        return f"⚠️ **Внимание**\n\nПодписка `{sub.username}` истекает через **24 часа**!"
     
     def node_connection_lost(node: NodeDto):
-        text = (
-            f"Потеряно соединение с нодой {node.name}"
-        )
-        return text
+        return f"🚨 **Потеряно соединение!**\n\nНода: `{node.name}` недоступна."
     
     def node_connection_restored(node: NodeDto):
-        text = (
-            f"Восстановлено соединение с нодой {node.name}"
-        )
-        return text
+        return f"✅ **Соединение восстановлено!**\n\nНода: `{node.name}` снова в строю."
     
     def invoice_created(invoice):
-        text = (
-            f"Оплатите счет на сумму {invoice.amount} {invoice.fiat} по ссылке ниже"
+        return (
+            "🧾 **Счет на оплату**\n\n"
+            f"Сумма к оплате: **{invoice.amount} {invoice.fiat}**\n\n"
+            "Перейдите по ссылке ниже для завершения платежа:"
         )
-        return text
     
     def invoice_paid():
-        text = (
-            "Тестовая оплата прошла успешно"
-        )
-        return text
+        return "🎉 **Оплата прошла успешно!**\n\nСредства зачислены на ваш баланс."
     
     def top_up():
-        text = (
-            "Введите сумму пополнения в рублях (минимум 100)"
-        )
-        return text
+        return "💰 **Пополнение баланса**\n\nВведите сумму пополнения в рублях *(минимум 100)*:"
     
     def payment():
-        text = (
-            "Выберите способ оплаты"
-        )
-        return text
+        return "💳 **Оплата**\n\nВыберите удобный способ оплаты ниже:"

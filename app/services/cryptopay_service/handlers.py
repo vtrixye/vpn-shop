@@ -1,3 +1,4 @@
+from aiogram.types import InputRichMessage
 from aiosend import WebhookRouter
 from aiosend.types import Invoice
 from telegram.text import Text
@@ -18,6 +19,6 @@ async def handle_payment(invoice: Invoice) -> None:
     await bot.edit_message_text(
         chat_id=payload.chat_id,
         message_id=payload.message_id,
-        text=text,
+        rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )

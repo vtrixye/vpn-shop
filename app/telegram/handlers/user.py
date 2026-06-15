@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputRichMessage
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -24,14 +24,20 @@ async def main_menu(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
     text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=callback.from_user.id)
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @user_router.callback_query(F.data == "profile")
 async def profile(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
     text = await Text.profile(session, callback.from_user.id)
     keyboard = kb.profile()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 class TopUpState(StatesGroup):
     amount = State()
@@ -52,7 +58,10 @@ async def top_up(callback: CallbackQuery, state: FSMContext):
     await state.update_data(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
     text = Text.top_up()
     keyboard = kb.top_up()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @user_router.message(TopUpState.amount)
 async def top_up_amount(message: Message, state: FSMContext):
@@ -60,7 +69,7 @@ async def top_up_amount(message: Message, state: FSMContext):
     amount = message.text.strip()
     await message.delete()
 
-    if not amount.isdigit() or 100 <= int(amount) <= 99999:
+    if not (amount.isdigit() and 100 <= int(amount) <= 99999):
         text = "Введите целое число (минимум 100)"
         keyboard = kb.top_up()
     else:
@@ -70,11 +79,10 @@ async def top_up_amount(message: Message, state: FSMContext):
         keyboard = kb.payment(back="top_up")
 
     await message.bot.edit_message_text(
-            text=text,
+            rich_message=InputRichMessage(markdown=text),
             chat_id=data["chat_id"],
             message_id=data["message_id"],
-            reply_markup=keyboard,
-            parse_mode="HTML"
+            reply_markup=keyboard
         )
 
 
@@ -83,7 +91,10 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
     text = Text.my_subs()
     keyboard = await kb.my_subs(session=session, id=callback.from_user.id)
-    await callback.message.edit_text(text=text, reply_markup=keyboard)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @user_router.callback_query(F.data == "trial_sub")
 async def trial_sub(callback: CallbackQuery, session: AsyncSession):
@@ -100,7 +111,10 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
 
     text = Text.trial_sub()
     keyboard = kb.trial_sub()
-    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @user_router.callback_query(F.data == "delete_message")
 async def delete_message(callback: CallbackQuery):

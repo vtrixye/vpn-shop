@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, InputRichMessage
 
 from telegram.text import Text
 from telegram.keyboards import cryptopay as kb
@@ -38,6 +38,6 @@ async def create_invoice_handler(callback: CallbackQuery) -> None:
     keyboard = kb.cryptopay_invoice(invoice.mini_app_invoice_url, invoice.amount)
     
     await callback.message.edit_text(
-        text=text,
+        rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
