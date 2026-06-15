@@ -24,9 +24,9 @@ class Text:
 
         return (
             "## ![🛂](tg://emoji?id=5258011929993026890) Профиль\n\n"
-            f'> * ![🛂](tg://emoji?id=5936017305585586269) **ID:** `{id}`\n'
-            f'> * ![💳](tg://emoji?id=5769403330761593044) **Баланс:** `{user.balance} ₽`\n'
-            f'> * ![🟢](tg://emoji?id=5778335621491723621) **Активные подписки:** `{sub_count}`'
+            f'> ![🛂](tg://emoji?id=5936017305585586269) **ID:** `{id}`  \n'
+            f'> ![💳](tg://emoji?id=5769403330761593044) **Баланс:** `{user.balance} ₽`  \n'
+            f'> ![🟢](tg://emoji?id=5778335621491723621) **Активные подписки:** `{sub_count}`'
         )
     
     def my_subs():
@@ -79,10 +79,10 @@ class Text:
 
         return (
             "## 📝 Создание подписки\n\n"
-            f'> * ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`\n'
-            f'> * ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`\n'
-            f'> * ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`\n'
-            f'> * ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
+            f'> ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`  \n'
+            f'> ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`  \n'
+            f'> ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`  \n'
+            f'> ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
         )
     
     def set_username():
@@ -91,13 +91,13 @@ class Text:
     def user_expired(sub: Subscription):
         return (
             f"![🕘](tg://emoji?id=5776213190387961618) **Подписка истекла**\n\n"
-            "Время действия подписки `{sub.username}` подошло к концу."
+            f"Время действия подписки `{sub.username}` подошло к концу."
         )
     
     def user_expires_in_24_hours(sub: Subscription):
         return (
             f"⚠️ **Внимание**\n\n"
-            "Подписка `{sub.username}` истекает через **24 часа**!"
+            f"Подписка `{sub.username}` истекает через **24 часа**!"
         )
     
     def node_connection_lost(node: NodeDto):
