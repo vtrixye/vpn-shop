@@ -23,17 +23,23 @@ class Text:
         sub_count = await session.scalar(stmt)
 
         return (
-            "## 👤 Профиль\n\n"
-            f'* ![🛂](tg://emoji?id=5936017305585586269) **ID:** `{id}`\n'
-            f'* ![💳](tg://emoji?id=5769403330761593044) **Баланс:** `{user.balance} ₽`\n'
-            f'* ![🟢](tg://emoji?id=5778335621491723621) **Активные подписки:** `{sub_count}`'
+            "## ![🛂](tg://emoji?id=5258011929993026890) Профиль\n\n"
+            f'> * ![🛂](tg://emoji?id=5936017305585586269) **ID:** `{id}`\n'
+            f'> * ![💳](tg://emoji?id=5769403330761593044) **Баланс:** `{user.balance} ₽`\n'
+            f'> * ![🟢](tg://emoji?id=5778335621491723621) **Активные подписки:** `{sub_count}`'
         )
     
     def my_subs():
-        return "## 📦 Мои подписки\n\nСписок ваших активных и завершенных подписок:"
+        return (
+            "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки\n\n"
+            "Список ваших активных и завершенных подписок:"
+        )
     
     def admin_menu():
-        return "## 🛠 Панель админа\n\nУправление системой и пользователями:"
+        return (
+            "## ![🛂](tg://emoji?id=5258096772776991776) Панель админа\n\n"
+            "Управление системой и пользователями:"
+        )
 
     async def subs_control(session: AsyncSession) -> str:
         result = await session.execute(
@@ -53,7 +59,7 @@ class Text:
         disabled = stats.get("DISABLED", 0)
         
         text = (
-            '## 📊 Статистика подписок\n\n'
+            '## ![📊](tg://emoji?id=5203993413346680064) Статистика подписок\n\n'
             '| Статус | Количество |\n'
             '| :--- | :---: |\n'
             f'| ![📊](tg://emoji?id=5203993413346680064) **Всего** | `{total}` |\n'
@@ -73,20 +79,26 @@ class Text:
 
         return (
             "## 📝 Создание подписки\n\n"
-            f'> ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`\n'
-            f'> ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`\n'
-            f'> ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`\n'
-            f'> ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
+            f'> * ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`\n'
+            f'> * ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`\n'
+            f'> * ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`\n'
+            f'> * ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
         )
     
     def set_username():
         return "✏️ **Введите username:**"
 
     def user_expired(sub: Subscription):
-        return f"❌ **Подписка истекла**\n\nВремя действия подписки `{sub.username}` подошло к концу."
+        return (
+            f"![🕘](tg://emoji?id=5776213190387961618) **Подписка истекла**\n\n"
+            "Время действия подписки `{sub.username}` подошло к концу."
+        )
     
     def user_expires_in_24_hours(sub: Subscription):
-        return f"⚠️ **Внимание**\n\nПодписка `{sub.username}` истекает через **24 часа**!"
+        return (
+            f"⚠️ **Внимание**\n\n"
+            "Подписка `{sub.username}` истекает через **24 часа**!"
+        )
     
     def node_connection_lost(node: NodeDto):
         return f"🚨 **Потеряно соединение!**\n\nНода: `{node.name}` недоступна."
