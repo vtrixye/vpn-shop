@@ -114,3 +114,15 @@ class Text:
             "Тестовая оплата прошла успешно"
         )
         return text
+    
+    def top_up():
+        text = (
+            "Введите сумму пополнения в рублях (минимум 100)"
+        )
+        return text
+    
+    def payment():
+        text = (
+            "Выберите способ оплаты"
+        )
+        return text

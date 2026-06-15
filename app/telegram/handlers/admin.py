@@ -1,5 +1,9 @@
 from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import (
+    Message,
+    CallbackQuery,
+    InputRichMessage
+    )
 from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
@@ -24,9 +28,47 @@ async def cmd_admin(message: Message):
 
 @admin_router.message(Command("test"))
 async def cmd_test(message: Message):
-    text = "test"
-    keyboard = kb.test()
-    await message.answer(text=text, reply_markup=keyboard)
+    test_markdown = (
+        "# 👑 Нативный заголовок H1 (RichBlockSectionHeading)\n"
+        "## Подзаголовок уровня H2\n\n"
+        "Это стандартный параграф текста. Текст в RichMessage рендерится "
+        "чуть крупнее обычного сообщения в Telegram. Внутри него работают привычные "
+        "**жирный**, *курсив*, `код` и ||спойлер||.\n\n"
+        
+        "---" # Превратится в горизонтальную линию (RichBlockDivider)
+        "\n\n"
+        
+        "### 📊 1. Тест нативной таблицы (RichBlockTable)\n"
+        "| Название фичи | Статус | Версия |\n"
+        "| :--- | :---: | :---: |\n"
+        "| Markdown таблицы | ✅ Работает | 3.29 |\n"
+        "| Блочная верстка |  Доступно | API 10.1 |\n"
+        "| Без экранирования | 🔥 Идеально | Любая |\n\n"
+        
+        "### 📝 2. Тест списков (RichBlockList)\n"
+        "* Обычный маркированный список.\n"
+        "* Второй пункт списка.\n"
+        "1. Нумерованный список.\n"
+        "2. Следующий упорядоченный элемент.\n"
+        "- [x] Интерактивный список задач (Task List) — выполнен.\n"
+        "- [ ] Задача на будущее — не выполнена.\n\n"
+        
+        "### 📐 3. Тест математических выражений (LaTeX)\n"
+        "Благодаря блоку формул, уравнения теперь рендерятся красиво:\n"
+        "$$E = mc^2$$\n"
+        "А также интегралы внутри текста: $$\\int_a^b x^2 dx$$\n\n"
+        
+        "### 💬 4. Тест цитат и спойлеров блоков\n"
+        "> Это большая многострочная цитата (RichBlockBlockQuotation).\n"
+        "> Она выделяется красивой вертикальной линией слева.\n\n"
+        
+        "<details>\n"
+        "<summary>Развернуть детали (RichBlockDetails)</summary>\n"
+        "Здесь прячется скрытый текст, который раскрывается только по тапу пользователя!\n"
+        "</details>"
+    )
+
+    await message.answer_rich(rich_message=InputRichMessage(markdown=test_markdown))
 
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):

@@ -1,6 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from sqlalchemy.ext.asyncio import AsyncSession
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
@@ -30,6 +32,51 @@ async def profile(callback: CallbackQuery, session: AsyncSession):
     text = await Text.profile(session, callback.from_user.id)
     keyboard = kb.profile()
     await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+
+class TopUpState(StatesGroup):
+    amount = State()
+
+class Payment(StatesGroup):
+    wait_for_method = State()
+
+@user_router.callback_query(TopUpState.amount, F.data.startswith("top_up_"))
+async def top_up_amount(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.clear()
+
+
+@user_router.callback_query(F.data == "top_up")
+async def top_up(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.set_state(TopUpState.amount)
+    await state.update_data(chat_id=callback.message.chat.id, message_id=callback.message.message_id)
+    text = Text.top_up()
+    keyboard = kb.top_up()
+    await callback.message.edit_text(text=text, reply_markup=keyboard, parse_mode="HTML")
+
+@user_router.message(TopUpState.amount)
+async def top_up_amount(message: Message, state: FSMContext):
+    data = await state.get_data()
+    amount = message.text.strip()
+    await message.delete()
+
+    if not amount.isdigit() or 100 <= int(amount) <= 99999:
+        text = "Введите целое число (минимум 100)"
+        keyboard = kb.top_up()
+    else:
+        await state.set_state(Payment.wait_for_method)
+        await state.update_data(amount=int(amount))
+        text = Text.payment()
+        keyboard = kb.payment(back="top_up")
+
+    await message.bot.edit_message_text(
+            text=text,
+            chat_id=data["chat_id"],
+            message_id=data["message_id"],
+            reply_markup=keyboard,
+            parse_mode="HTML"
+        )
+
 
 @user_router.callback_query(F.data == "my_subs")
 async def my_subs(callback: CallbackQuery, session: AsyncSession):

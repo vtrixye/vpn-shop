@@ -39,7 +39,7 @@ def profile() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Пополнить баланс", icon_custom_emoji_id="5258204546391351475", callback_data="balance"),
+        InlineKeyboardButton(text="Пополнить баланс", icon_custom_emoji_id="5258204546391351475", callback_data="top_up"),
         InlineKeyboardButton(text="Мои подписки", icon_custom_emoji_id="5257965174979042426", callback_data="my_subs"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
     )
@@ -73,6 +73,33 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
 
     keyboard.adjust(1, 1, 1, 1, 1)
 
+    return keyboard.as_markup()
+
+def top_up() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="100₽", callback_data="top_up_100"),
+        InlineKeyboardButton(text="200₽", callback_data="top_up_200"),
+        InlineKeyboardButton(text="300₽", callback_data="top_up_300"),
+        InlineKeyboardButton(text="500₽", callback_data="top_up_500"),
+        InlineKeyboardButton(text="Назад", callback_data="profile")
+    )
+
+    keyboard.adjust(2, 2, 1)
+
+    return keyboard.as_markup()
+
+def payment(back: str) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Yookassa", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
+        InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
+        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5260416304224936047", callback_data=back),
+    )
+    
     return keyboard.as_markup()
 
 def delete_button(text = "OK"):

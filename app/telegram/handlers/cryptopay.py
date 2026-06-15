@@ -14,7 +14,7 @@ cryptopay_router = Router()
 cryptopay_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 cryptopay_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
-@cryptopay_router.callback_query(F.data == "balance")
+@cryptopay_router.callback_query(F.data == "cp_top_up")
 async def create_invoice_handler(callback: CallbackQuery) -> None:
     await callback.answer()
     
@@ -35,7 +35,7 @@ async def create_invoice_handler(callback: CallbackQuery) -> None:
     )
 
     text = Text.invoice_created(invoice)
-    keyboard = kb.cryptopay_invoice(invoice.mini_app_invoice_url)
+    keyboard = kb.cryptopay_invoice(invoice.mini_app_invoice_url, invoice.amount)
     
     await callback.message.edit_text(
         text=text,
