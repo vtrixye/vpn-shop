@@ -1,5 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InputRichMessage
+from aiogram.filters import Command, CommandObject
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
@@ -120,6 +121,19 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
 async def delete_message(callback: CallbackQuery):
     await callback.answer()
     await callback.message.delete()
+
+@user_router.message(Command("rich"))
+async def rich(message: Message, command: CommandObject):
+    if not(command.args):
+        return await message.answer(
+            text="нет текста",
+            reply_markup=kb.delete_button("Удалить")
+        )
+    
+    await message.answer_rich(
+        rich_message=InputRichMessage(markdown=command.args),
+        reply_markup=kb.delete_button()
+    )
 
 @user_router.callback_query()
 async def other(callback: CallbackQuery):
