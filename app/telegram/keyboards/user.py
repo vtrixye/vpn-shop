@@ -99,6 +99,8 @@ def payment(back: str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5260416304224936047", callback_data=back),
     )
+
+    keyboard.adjust(1, 1, 1, 1)
     
     return keyboard.as_markup()
 
