@@ -124,6 +124,7 @@ async def delete_message(callback: CallbackQuery):
 
 @user_router.message(Command("rich"))
 async def rich(message: Message, command: CommandObject):
+    await message.delete()
     if not(command.args):
         return await message.answer(
             text="нет текста",
