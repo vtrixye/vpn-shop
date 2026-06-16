@@ -7,7 +7,7 @@ from fastapi import FastAPI
 
 from services.redis_service import init_redis, close_redis
 
-from telegram import setup_webhook, setup_middlewares, shutdown_bot
+from telegram import init_dispatcher, setup_webhook, setup_middlewares, shutdown_bot
 from webhooks import routers
 from database import create_db
 from utils.logger import get_logger
@@ -27,6 +27,7 @@ async def init_db():
 
 async def init_bot():
     try:
+        await init_dispatcher()
         await setup_middlewares() 
         await setup_webhook()
         logger.info("Bot initialized successfully")

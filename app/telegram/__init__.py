@@ -10,20 +10,26 @@ from services.redis_service import get_redis
 logger = get_logger(__name__)
 
 bot = Bot(token=os.getenv("BOT_TOKEN"))
+dp: Dispatcher = None
 
-redis_instance = get_redis()
-storage = RedisStorage(redis=redis_instance, key_builder=DefaultKeyBuilder(with_destiny=True))
-dp = Dispatcher(storage=storage)
+async def init_dispatcher():
+    global dp
 
-dp["redis"] = redis_instance
+    redis_instance = get_redis()
+    storage = RedisStorage(redis=redis_instance, key_builder=DefaultKeyBuilder(with_destiny=True))
+    dp = Dispatcher(storage=storage)
 
-for router in routers:
-    dp.include_router(router)
+    dp["redis"] = redis_instance
+
+    for router in routers:
+        dp.include_router(router)
+
+    logger.info("Aiogram Dispatcher with Redis storage initialized successfully")
 
 async def setup_middlewares():
-    
+    if dp is None:
+        raise RuntimeError("Dispatcher is not initialized")
     dp.update.middleware(DataBaseSession(session_maker))
-
     logger.info("Bot middlewares configured")
 
 async def setup_webhook():
