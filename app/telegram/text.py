@@ -83,8 +83,17 @@ class Text:
             f'> ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
         )
     
-    def set_username():
-        return "✏️ **Введите username:**"
+    def sub_editing(field_name: str):
+        match field_name:
+            case "expire_at":
+                text = "Введите число дней (например, 30) или дату в формате ДД.ММ.ГГГГ:"
+            case "hwid":
+                text = "Введите количество устройств"
+            case "telegram":
+                text = "Введите Telegram ID"
+            case "username":
+                text = "Введите уникальный username. Его нельзя изменить в будущем!"
+        return text
 
     def user_expired(sub: Subscription):
         return (

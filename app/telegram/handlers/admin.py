@@ -16,6 +16,7 @@ from database.models import User
 from database.crud import *
 from telegram.text import Text
 import telegram.keyboards.admin as kb
+from utils.validators import VALIDATORS
 
 admin_router = Router()
 admin_router.message.filter(ChatTypeFilter(['private', 'group']), IsAdmin())
@@ -30,12 +31,6 @@ async def cmd_admin(message: Message):
         reply_markup=keyboard
     )
 
-@admin_router.message(Command("test"))
-async def test(message: Message, redis: Redis):
-    await redis.set(f"user:{message.from_user.id}", "active", ex=3600)
-    status = await redis.get(f"user:{message.from_user.id}")
-    await message.answer(f"Статус в Redis: {status}")
-
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):
     await callback.answer()
@@ -45,6 +40,13 @@ async def admin_menu(callback: CallbackQuery):
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
+
+@admin_router.message(Command("test"))
+async def test(message: Message, redis: Redis):
+    await redis.set(f"user:{message.from_user.id}", "active", ex=3600)
+    status = await redis.get(f"user:{message.from_user.id}")
+    await message.answer(f"Статус в Redis: {status}")
+
 
 @admin_router.callback_query(F.data == "subs_control")
 async def subs_control(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
@@ -65,56 +67,66 @@ async def subs_control(callback: CallbackQuery, state: FSMContext, session: Asyn
 
 
 class CreateSubState(StatesGroup):
-    edit = State()
-    username = State()
-    expire_at = State()
-    hwid = State()
-    telegram = State()
+    menu = State()
+    editing = State()
 
 @admin_router.callback_query(F.data == "sub_create")
-async def sub_create(callback: CallbackQuery, state: FSMContext):
+async def sub_create_handler(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    text = Text.sub_create()
-    keyboard = kb.sub_create()
-    await callback.message.edit_text(
-        rich_message=InputRichMessage(markdown=text),
-        reply_markup=keyboard
-    )
-    await state.set_state(CreateSubState.edit)
-
-@admin_router.callback_query(F.data == "sub_create_state")
-async def sub_create_state(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
+    
+    current_state = await state.get_state()
+    
+    if current_state is None:
+        await state.set_state(CreateSubState.menu)
+        await state.update_data(mes_id=callback.message.message_id)
+           
     data = await state.get_data()
-    text = Text.sub_create(data)
-    keyboard = kb.sub_create()
     await callback.message.edit_text(
-        rich_message=InputRichMessage(markdown=text),
-        reply_markup=keyboard
+        rich_message=InputRichMessage(markdown=Text.sub_create(data)),
+        reply_markup=kb.sub_create()
     )
 
-@admin_router.callback_query(F.data == "set_username")
-async def set_username(callback: CallbackQuery, state: FSMContext):
+@admin_router.callback_query(CreateSubState.menu, F.data.startswith("set:"))
+async def set_field(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
-    text = Text.set_username()
-    keyboard = kb.set_username()
+    field_name = callback.data.split(":")[1]
+    
+    await state.update_data(current_field=field_name)
+    await state.set_state(CreateSubState.editing)
+    
     await callback.message.edit_text(
-        rich_message=InputRichMessage(markdown=text),
-        reply_markup=keyboard
+        rich_message=InputRichMessage(markdown=Text.sub_editing(field_name)),
+        reply_markup=kb.sub_editing(field_name)
     )
-    await state.update_data(mes_id = callback.message.message_id)
-    await state.set_state(CreateSubState.username)
 
-@admin_router.message(CreateSubState.username, F.text)
-async def username_state(message: Message, state: FSMContext, bot: Bot):
-    await state.update_data(username=message.text)
-    data = await state.get_data()
-    text = Text.sub_create(data)
-    keyboard = kb.sub_create()
+@admin_router.message(CreateSubState.editing, F.text)
+async def capture_field_text(message: Message, state: FSMContext, bot: Bot):
     await message.delete()
+    
+    data = await state.get_data()
+    field_name = data.get("current_field")
+    mes_id = data.get("mes_id")
+    
+    validator = VALIDATORS.get(field_name)
+    if validator:
+        is_valid, result = await validator(message.text)
+        if not is_valid:
+            return await bot.edit_message_text(
+                chat_id=message.chat.id,
+                message_id=mes_id,
+                rich_message=InputRichMessage(markdown=result),
+                reply_markup=kb.sub_editing(field_name)
+            )
+            
+        await state.update_data({field_name: result})
+    
+    await state.set_state(CreateSubState.menu)
+    
+    updated_data = await state.get_data()
     await bot.edit_message_text(
-        chat_id=message.chat.id, message_id=data.get("mes_id"),
-        rich_message=InputRichMessage(markdown=text))
-    await state.set_state(CreateSubState.edit)
-
+        chat_id=message.chat.id,
+        message_id=mes_id,
+        rich_message=InputRichMessage(markdown=Text.sub_create(updated_data)),
+        reply_markup=kb.sub_create()
+    )
     

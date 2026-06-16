@@ -14,7 +14,6 @@ logger = get_logger(__name__)
 
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 if not DEFAULT_SUB_USER_ID:
-    logger.error("telegram_id не найден в переменной окружения DEFAULT_SUB_USER_ID")
     raise ValueError("DEFAULT_SUB_USER_ID is not set in environment")
 
 DEFAULT_INTERNAL_SQUAD = uuid_lib.UUID("dee381c9-17dd-4221-ab57-511543f58d7b")
@@ -55,6 +54,18 @@ async def create_user(
         active_internal_squads=active_internal_squads
     )
 
+    remnawave.users.get_user_by_username
     created_user = await remnawave.users.create_user(body=user)
     logger.info(f"Отправлен запрос на создание пользователя {username}")
     return created_user
+
+async def is_username_taken(username: str) -> bool:
+    try:
+        await remnawave.users.get_user_by_username(username=username.strip())
+        return True
+    except Exception as e:
+        if "404" in str(e):
+            return False
+        
+        logger.error(f"Не удалось проверить юзернейм {username} через API: {e}")
+        return True
