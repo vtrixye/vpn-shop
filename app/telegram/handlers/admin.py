@@ -10,6 +10,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
 from redis.asyncio import Redis
+from datetime import datetime, timedelta
 
 from telegram.filters import ChatTypeFilter, IsAdmin
 from database.models import User
@@ -79,13 +80,39 @@ async def sub_create_handler(callback: CallbackQuery, state: FSMContext):
     if current_state is None:
         await state.set_state(CreateSubState.menu)
         await state.update_data(mes_id=callback.message.message_id)
-           
+
+    await state.set_state(CreateSubState.menu)   
     data = await state.get_data()
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=Text.sub_create(data)),
         reply_markup=kb.sub_create()
     )
 
+@admin_router.callback_query(CreateSubState.editing, F.data.startswith("set:"))
+async def set_value(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+
+    state_data = await state.get_data()
+    field_name = state_data.get("current_field")
+    
+    data = callback.data.split(":")[1]
+
+    if field_name == "telegram" and data == "def":
+        data = "1000000000"
+    elif field_name == "expire_at":
+        date = datetime.now() + timedelta(days=int(data))
+        data = date.strftime("%Y-%m-%d")
+
+    await state.update_data({field_name: data})
+    await state.set_state(CreateSubState.menu)
+
+    updated_data = await state.get_data()
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=Text.sub_create(updated_data)),
+        reply_markup=kb.sub_create()
+    )
+
+                             
 @admin_router.callback_query(CreateSubState.menu, F.data.startswith("set:"))
 async def set_field(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
