@@ -5,6 +5,8 @@ import uvicorn
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
+from services.redis_service import init_redis, close_redis
+
 from telegram import setup_webhook, setup_middlewares, shutdown_bot
 from webhooks import routers
 from database import create_db
@@ -34,7 +36,7 @@ async def init_bot():
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    
+    await init_redis()
     init_remnawave()
     init_cryptopay(app=app)
     await init_db()
@@ -43,6 +45,7 @@ async def lifespan(app: FastAPI):
     yield
     
     await shutdown_bot()
+    await close_redis()
 
 app = FastAPI(lifespan=lifespan)
 

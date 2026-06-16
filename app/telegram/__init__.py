@@ -1,14 +1,21 @@
 import os
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from telegram.handlers import routers
 from utils.logger import get_logger
 from database import session_maker
 from telegram.middlewares import DataBaseSession
+from services.redis_service import get_redis
 
 logger = get_logger(__name__)
 
 bot = Bot(token=os.getenv("BOT_TOKEN"))
-dp = Dispatcher()
+
+redis_instance = get_redis()
+storage = RedisStorage(redis=redis_instance, key_builder=DefaultKeyBuilder(with_destiny=True))
+dp = Dispatcher(storage=storage)
+
+dp["redis"] = redis_instance
 
 for router in routers:
     dp.include_router(router)

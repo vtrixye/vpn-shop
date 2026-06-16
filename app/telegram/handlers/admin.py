@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
+from redis.asyncio import Redis
 
 from telegram.filters import ChatTypeFilter, IsAdmin
 from database.models import User
@@ -28,6 +29,12 @@ async def cmd_admin(message: Message):
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
+
+@admin_router.message(Command("test"))
+async def test(message: Message, redis: Redis):
+    await redis.set(f"user:{message.from_user.id}", "active", ex=3600)
+    status = await redis.get(f"user:{message.from_user.id}")
+    await message.answer(f"Статус в Redis: {status}")
 
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):
