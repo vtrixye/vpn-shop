@@ -97,6 +97,19 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )
 
+@user_router.callback_query(F.data.startswith("sub:"))
+async def sub_menu(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[1]
+    if not(await rw.check_callback(callback.from_user.id, short_uuid, session)):
+        return
+    text = await Text.sub_menu(session, short_uuid)
+    keyboard = kb.sub_menu()
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
 @user_router.callback_query(F.data == "trial_sub")
 async def trial_sub(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()

@@ -4,6 +4,7 @@ from remnawave.models.webhook import NodeDto
 from sqlalchemy import select, func
 
 from database.models import User, Subscription
+from utils.time import get_remaining_time
 
 DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
@@ -33,7 +34,18 @@ class Text:
         return (
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
-    
+    async def sub_menu(session: AsyncSession, short_uuid: str):
+        sub = await session.get(Subscription, short_uuid)
+
+        remaining = get_remaining_time(sub.expire_at)
+        text = (
+            "## ![🛂](tg://emoji?id=5258011929993026890) Ваша подписка  \n\n"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Истекает через: {remaining}"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Устройства: {sub.hwid_device_limit}"
+        )
+        return text
+
     def admin_menu():
         return (
             "## ![🛂](tg://emoji?id=5258096772776991776) Панель админа"

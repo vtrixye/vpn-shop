@@ -3,7 +3,9 @@ import uuid as uuid_lib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from database.models import Subscription, User
 from services.remnawave_service import get_remnawave
 from services.remnawave_service.enums import UsernameType, ExpireType
 from utils.logger import get_logger
@@ -69,3 +71,13 @@ async def is_username_taken(username: str) -> bool:
         
         logger.error(f"Не удалось проверить юзернейм {username} через API: {e}")
         return True
+
+async def check_callback(id: int, short_uuid: str, session: AsyncSession):
+    sub = await session.get(Subscription, short_uuid)
+    if sub.user_id != id:
+        return False
+    try:
+        await remnawave.users.get_user_by_short_uuid(short_uuid)
+        return True
+    except:
+        return False

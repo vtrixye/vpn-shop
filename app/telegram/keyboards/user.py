@@ -32,7 +32,6 @@ def trial_sub() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
     )
     
-    keyboard.adjust(1, 1, 1)
     return keyboard.as_markup()
 
 def profile() -> InlineKeyboardMarkup:
@@ -65,7 +64,7 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
             InlineKeyboardButton(
                 text=f"{sub.username} ({time})",
                 icon_custom_emoji_id=icon,
-                callback_data=f"get_sub_{sub.short_uuid}"
+                callback_data=f"sub:{sub.short_uuid}"
             )
         )
     
@@ -73,6 +72,19 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
 
     keyboard.adjust(1, 1, 1, 1, 1)
 
+    return keyboard.as_markup()
+
+def sub_menu() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Продлить", callback_data="renew_sub"),
+        InlineKeyboardButton(text="Подключить", callback_data="renew_sub"),
+        InlineKeyboardButton(text="Устройства", callback_data="renew_sub"),
+        InlineKeyboardButton(text="Назад", callback_data="my_subs")
+    )
+
+    keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
 def top_up() -> InlineKeyboardMarkup:

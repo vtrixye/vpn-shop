@@ -8,8 +8,11 @@ async def validate_username(text: str) -> tuple[bool, any]:
     
     if await rw.is_username_taken(username):
         return False, f"![❌](tg://emoji?id=5260342697075416641) Юзернейм ` {username} ` уже занят в панели! Введите другой:"
-        
-    return True, username
+    
+    if all((64 < ord(x) < 91) or (96 < ord(x) < 123) or x.isdigit() or x in "-_" for x in username):
+        return True, username
+    else:
+        return False, "![❌](tg://emoji?id=5260342697075416641) Юзернейм должен содержать только латинский алфавит, цифры, _ и -"
 
 async def validate_expire_at(text: str) -> tuple[bool, any]:
     clean_text = text.strip()
