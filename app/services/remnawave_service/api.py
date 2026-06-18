@@ -78,6 +78,7 @@ async def check_callback(id: int, sub: Subscription):
     logger.info("log into checking")
     try:
         await remnawave.users.get_user_by_uuid(sub.uuid)
+        logger.info("log: sub was founded")
         return True
     except:
         return False

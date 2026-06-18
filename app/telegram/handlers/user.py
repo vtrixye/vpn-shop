@@ -111,6 +111,7 @@ async def sub_menu(callback: CallbackQuery, session: AsyncSession):
         return
     text = Text.sub_menu(sub)
     keyboard = kb.sub_menu(sub)
+    logger.info("log: text and kb")
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
