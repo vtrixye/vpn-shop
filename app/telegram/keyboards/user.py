@@ -74,14 +74,14 @@ async def my_subs(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
 
     return keyboard.as_markup()
 
-def sub_menu() -> InlineKeyboardMarkup:
+def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Продлить", callback_data="renew_sub"),
-        InlineKeyboardButton(text="Подключить", callback_data="renew_sub"),
-        InlineKeyboardButton(text="Устройства", callback_data="renew_sub"),
-        InlineKeyboardButton(text="Назад", callback_data="my_subs")
+        InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
+        InlineKeyboardButton(text="Подключить", copy_text=sub.subscription_url, icon_custom_emoji_id="5260416304224936047"),
+        InlineKeyboardButton(text="Устройства", callback_data="sub_devices", icon_custom_emoji_id="5877318502947229960"),
+        InlineKeyboardButton(text="Назад", callback_data="my_subs", icon_custom_emoji_id="5258236805890710909")
     )
 
     keyboard.adjust(1, 1, 1, 1)

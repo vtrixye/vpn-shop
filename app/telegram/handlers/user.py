@@ -4,6 +4,7 @@ from aiogram.filters import Command, CommandObject
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
+from sqlalchemy import select
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
@@ -100,10 +101,14 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
 async def sub_menu(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
     short_uuid = callback.data.split(":")[1]
-    if not(await rw.check_callback(callback.from_user.id, short_uuid, session)):
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
         return
-    text = await Text.sub_menu(session, short_uuid)
-    keyboard = kb.sub_menu()
+    text = await Text.sub_menu(sub)
+    keyboard = kb.sub_menu(sub)
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard

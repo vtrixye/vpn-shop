@@ -34,15 +34,12 @@ class Text:
         return (
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
-    async def sub_menu(session: AsyncSession, short_uuid: str):
-        stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
-        sub = await session.scalar(stmt)
-
+    async def sub_menu(sub: Subscription):
         remaining = get_remaining_time(sub.expire_at)
         text = (
             "## ![🛂](tg://emoji?id=5258011929993026890) Ваша подписка  \n\n"
-            f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}"
-            f"> ![🛂](tg://emoji?id=5936017305585586269) Истекает через: {remaining}"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}  \n"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Истекает через: {remaining}  \n"
             f"> ![🛂](tg://emoji?id=5936017305585586269) Устройства: {sub.hwid_device_limit}"
         )
         return text
