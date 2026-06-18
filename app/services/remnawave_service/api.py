@@ -4,6 +4,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from database.models import Subscription, User
 from services.remnawave_service import get_remnawave
@@ -73,11 +74,12 @@ async def is_username_taken(username: str) -> bool:
         return True
 
 async def check_callback(id: int, short_uuid: str, session: AsyncSession):
-    sub = session.query(Subscription).filter(
-        Subscription.short_uuid == short_uuid
-    ).first()
-    if sub.user_id != id:
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+    
+    if not sub or sub.user_id != id:
         return False
+    
     try:
         await remnawave.users.get_user_by_short_uuid(short_uuid)
         return True
