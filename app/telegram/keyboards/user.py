@@ -1,4 +1,10 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import (
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    ReplyKeyboardMarkup,
+    KeyboardButton,
+    CopyTextButton
+)
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -79,7 +85,7 @@ def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
 
     keyboard.add(
         InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
-        InlineKeyboardButton(text="Подключить", copy_text=sub.subscription_url, icon_custom_emoji_id="5260416304224936047"),
+        InlineKeyboardButton(text="Подключить", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5260416304224936047"),
         InlineKeyboardButton(text="Устройства", callback_data="sub_devices", icon_custom_emoji_id="5877318502947229960"),
         InlineKeyboardButton(text="Назад", callback_data="my_subs", icon_custom_emoji_id="5258236805890710909")
     )
