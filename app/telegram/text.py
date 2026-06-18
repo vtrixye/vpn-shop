@@ -34,7 +34,7 @@ class Text:
         return (
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
-    async def sub_menu(sub: Subscription):
+    def sub_menu(sub: Subscription):
         remaining = get_remaining_time(sub.expire_at)
         text = (
             "## ![🛂](tg://emoji?id=5258011929993026890) Ваша подписка  \n\n"

@@ -105,9 +105,11 @@ async def sub_menu(callback: CallbackQuery, session: AsyncSession):
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
     sub = await session.scalar(stmt)
 
+    logger.info("log after database query")
+
     if not(await rw.check_callback(callback.from_user.id, sub)):
         return
-    text = await Text.sub_menu(sub)
+    text = Text.sub_menu(sub)
     keyboard = kb.sub_menu(sub)
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),

@@ -75,7 +75,7 @@ async def is_username_taken(username: str) -> bool:
 async def check_callback(id: int, sub: Subscription):
     if not sub or sub.user_id != id:
         return False
-    
+    logger.info("log into checking")
     try:
         await remnawave.users.get_user_by_uuid(sub.uuid)
         return True
