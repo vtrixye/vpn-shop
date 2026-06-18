@@ -75,10 +75,9 @@ async def is_username_taken(username: str) -> bool:
 async def check_callback(id: int, sub: Subscription):
     if not sub or sub.user_id != id:
         return False
-    logger.info("log into checking")
     try:
-        await remnawave.users.get_user_by_uuid(sub.uuid)
-        logger.info("log: sub was founded")
+        await remnawave.users.get_user_by_short_uuid(sub.short_uuid)
         return True
-    except:
+    except Exception as e:
+        logger.error(f"Error in Remnawave API call: {e}")
         return False
