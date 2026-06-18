@@ -86,7 +86,6 @@ async def top_up_amount(message: Message, state: FSMContext):
             reply_markup=keyboard
         )
 
-
 @user_router.callback_query(F.data == "my_subs")
 async def my_subs(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()

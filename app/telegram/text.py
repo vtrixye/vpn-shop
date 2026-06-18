@@ -35,7 +35,9 @@ class Text:
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
     async def sub_menu(session: AsyncSession, short_uuid: str):
-        sub = await session.get(Subscription, short_uuid)
+        sub = session.query(Subscription).filter(
+            Subscription.short_uuid == short_uuid
+        ).first()
 
         remaining = get_remaining_time(sub.expire_at)
         text = (

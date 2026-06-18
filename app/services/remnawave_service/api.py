@@ -73,7 +73,9 @@ async def is_username_taken(username: str) -> bool:
         return True
 
 async def check_callback(id: int, short_uuid: str, session: AsyncSession):
-    sub = await session.get(Subscription, short_uuid)
+    sub = session.query(Subscription).filter(
+        Subscription.short_uuid == short_uuid
+    ).first()
     if sub.user_id != id:
         return False
     try:

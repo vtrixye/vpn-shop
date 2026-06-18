@@ -35,6 +35,7 @@ async def setup_middlewares():
 async def setup_webhook():
     await bot.set_webhook(
         url=f"{os.getenv('BASE_URL')}{os.getenv('TELEGRAM_WEBHOOK_PATH')}",
+        allowed_updates=dp.resolve_used_update_types(),
         drop_pending_updates=True
     )
     logger.info("Telegram webhook set successfully")
