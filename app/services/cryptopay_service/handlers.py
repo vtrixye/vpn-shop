@@ -2,7 +2,7 @@ from aiogram.types import InputRichMessage
 from aiosend import WebhookRouter
 from aiosend.types import Invoice
 from telegram.text import Text
-import app.telegram.keyboards.payment as kb
+import telegram.keyboards.payment as kb
 from services.cryptopay_service.models import PaymentData
 
 router = WebhookRouter()
