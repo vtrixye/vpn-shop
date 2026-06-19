@@ -39,8 +39,8 @@ class Text:
         text = (
             "## ![🛂](tg://emoji?id=5258011929993026890) Ваша подписка  \n\n"
             f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}  \n"
-            f"> ![🛂](tg://emoji?id=5936017305585586269) Истекает через: {remaining}  \n"
-            f"> ![🛂](tg://emoji?id=5936017305585586269) Устройства: {sub.hwid_device_limit}"
+            f"> ![🛂](tg://emoji?id=5776213190387961618) Истекает через: {remaining}  \n"
+            f"> ![🛂](tg://emoji?id=5877318502947229960) Устройства: {sub.hwid_device_limit}"
         )
         return text
 
@@ -146,4 +146,10 @@ class Text:
         return (
             "## ![💳](tg://emoji?id=5445353829304387411) Оплата\n\n"
             "Выберите удобный способ оплаты ниже:"
+        )
+    
+    def pay_stars():
+        return (
+            "## ![💳](tg://emoji?id=5445353829304387411) Telegram Stars\n\n"
+            "Оплатите по ссылке ниже"
         )
