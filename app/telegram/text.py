@@ -36,7 +36,7 @@ class Text:
         )
     def sub_menu(sub: Subscription, total: int):
         remaining = get_remaining_time(sub.expire_at)
-        devices = f"{total}/{sub.hwid_device_limit}"
+        devices = f"{int(total)} из {sub.hwid_device_limit or '∞'}"
         text = (
             "## ![🛂](tg://emoji?id=5258011929993026890) Ваша подписка  \n\n"
             f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}  \n"
