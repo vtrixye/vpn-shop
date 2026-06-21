@@ -60,7 +60,9 @@ async def sub_menu(callback: CallbackQuery, session: AsyncSession):
 
     if not(await rw.check_callback(callback.from_user.id, sub)):
         return
-    text = Text.sub_menu(sub)
+    
+    hw = await rw.get_user_devices(sub)
+    text = Text.sub_menu(sub, hw.total)
     keyboard = kb.sub_menu(sub)
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),

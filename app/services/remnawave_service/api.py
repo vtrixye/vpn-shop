@@ -79,5 +79,12 @@ async def check_callback(id: int, sub: Subscription):
         await remnawave.users.get_user_by_short_uuid(sub.short_uuid)
         return True
     except Exception as e:
-        logger.error(f"Error in Remnawave API call: {e}")
+        logger.error(f"Ошибка получения подписки по short_uuid: \n{e}")
         return False
+    
+async def get_user_devices(sub: Subscription):
+    try:
+        hw = await remnawave.hwid.get_hwid_user(sub.uuid)
+        return hw
+    except Exception as e:
+        logger.error(f"Ошибка получения устройств: \n{e}")
