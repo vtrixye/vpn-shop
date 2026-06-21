@@ -84,7 +84,7 @@ async def check_callback(id: int, sub: Subscription):
     
 async def get_user_devices(sub: Subscription):
     try:
-        hw = await remnawave.hwid.get_hwid_user(sub.uuid)
+        hw = await remnawave.hwid.get_hwid_user(str(sub.uuid))
         return hw
     except Exception as e:
         logger.error(f"Ошибка получения устройств: \n{e}")
