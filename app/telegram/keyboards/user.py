@@ -8,6 +8,7 @@ from aiogram.types import (
 from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from remnawave.models.hwid import GetUserHwidDevicesResponseDto
 
 from database.models import User, Subscription
 from utils.time import get_remaining_time
@@ -86,12 +87,30 @@ def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
         InlineKeyboardButton(text="Копировать ссылку", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5260416304224936047"),
-        InlineKeyboardButton(text="Подключить", callback_data="sub_devices", icon_custom_emoji_id="5260416304224936047"),
-        InlineKeyboardButton(text="Устройства", callback_data="sub_devices", icon_custom_emoji_id="5877318502947229960"),
+        InlineKeyboardButton(text="Подключить", callback_data="connect", icon_custom_emoji_id="5260416304224936047"),
+        InlineKeyboardButton(text="Устройства", callback_data=f"sub:dev:{sub.short_uuid}", icon_custom_emoji_id="5877318502947229960"),
         InlineKeyboardButton(text="Назад", callback_data="my_subs", icon_custom_emoji_id="5258236805890710909")
     )
 
     keyboard.adjust(1, 1, 1, 1)
+    return keyboard.as_markup()
+
+def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
+    keyboard = InlineKeyboardBuilder()
+
+    for dev in hw.devices:
+        keyboard.row(
+            InlineKeyboardButton(
+                text=f"{dev.platform} | {dev.device_model} | {dev.os_version}",
+                icon_custom_emoji_id="5258236805890710909",
+                callback_data=f"dev:{dev.hwid}"
+            )
+        )
+    
+    keyboard.row(
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:dev:{short_uuid}", icon_custom_emoji_id="5258236805890710909"),
+    )
+
     return keyboard.as_markup()
 
 def delete_button(text = "OK"):

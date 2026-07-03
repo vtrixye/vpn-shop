@@ -30,7 +30,7 @@ def top_up() -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="200₽", callback_data="top_up_200"),
         InlineKeyboardButton(text="300₽", callback_data="top_up_300"),
         InlineKeyboardButton(text="500₽", callback_data="top_up_500"),
-        InlineKeyboardButton(text="Назад", callback_data="profile")
+        InlineKeyboardButton(text="Назад", callback_data="profile", icon_custom_emoji_id="5258236805890710909")
     )
 
     keyboard.adjust(2, 2, 1)
@@ -44,7 +44,7 @@ def payment(back: str) -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Yookassa", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
         InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
         InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5260416304224936047", callback_data="pay_stars"),
-        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5260416304224936047", callback_data=back),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back),
     )
 
     keyboard.adjust(1, 1, 1, 1)
@@ -55,7 +55,7 @@ def pay_stars(price: int, invoice_link: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
     keyboard.add(
         InlineKeyboardButton(text=f"Pay {price}⭐️",url=invoice_link, icon_custom_emoji_id="5260416304224936047"),
-        InlineKeyboardButton(text="Назад", callback_data="top_up", icon_custom_emoji_id="5260416304224936047")
+        InlineKeyboardButton(text="Назад", callback_data="top_up", icon_custom_emoji_id="5258236805890710909")
     )
     keyboard.adjust(1)
     return keyboard.as_markup()

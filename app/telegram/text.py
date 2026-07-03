@@ -105,6 +105,12 @@ class Text:
             case "username":
                 text = "Введите уникальный username. Его нельзя изменить в будущем!"
         return text
+    
+    def sub_dev():
+        return (
+            "## ![🕘](tg://emoji?id=5877318502947229960) Ваши устройства\n\n"
+            "Нажмите на устройство, чтобы "
+        )
 
     def user_expired(sub: Subscription):
         return (

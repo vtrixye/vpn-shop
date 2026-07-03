@@ -89,6 +89,24 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )
 
+@user_router.callback_query(F.data == "sub:dev:")
+async def sub_dev(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    hw = await rw.get_user_devices(sub)
+
+    text = Text.sub_dev()
+    keyboard = kb.sub_dev(hw, short_uuid)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
 @user_router.callback_query(F.data == "delete_message")
 async def delete_message(callback: CallbackQuery):
     await callback.answer()

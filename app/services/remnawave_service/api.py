@@ -9,8 +9,7 @@ from database.models import Subscription, User
 from services.remnawave_service import get_remnawave
 from services.remnawave_service.enums import UsernameType, ExpireType
 from utils.logger import get_logger
-from utils import rand
-from utils import time
+from utils import rand, time
 
 logger = get_logger(__name__)
 
