@@ -101,7 +101,7 @@ def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
     for dev in hw.devices:
         keyboard.row(
             InlineKeyboardButton(
-                text=f"{dev.platform} | {dev.device_model} | {dev.os_version}",
+                text=f"{dev.user_agent.split("/")[0].upper()} {dev.device_model[:15]}",
                 icon_custom_emoji_id="5258236805890710909",
                 callback_data=f"dev:{dev.hwid}"
             )
