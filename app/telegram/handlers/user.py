@@ -98,9 +98,11 @@ async def sub_dev(callback: CallbackQuery, session: AsyncSession):
     sub = await session.scalar(stmt)
 
     hw = await rw.get_user_devices(sub)
-
+    logger.info("hw log")
     text = Text.sub_dev()
+    logger.info("text log")
     keyboard = kb.sub_dev(hw, short_uuid)
+    logger.info("kb log")
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),

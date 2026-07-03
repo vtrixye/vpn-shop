@@ -12,6 +12,9 @@ from remnawave.models.hwid import GetUserHwidDevicesResponseDto
 
 from database.models import User, Subscription
 from utils.time import get_remaining_time
+from utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 async def main_menu(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
     user = await session.get(User, id)
@@ -99,6 +102,7 @@ def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
     keyboard = InlineKeyboardBuilder()
 
     for dev in hw.devices:
+        logger.info("dev log")
         keyboard.row(
             InlineKeyboardButton(
                 text=f"{dev.user_agent.split("/")[0].upper()} {dev.device_model[:15]}",
