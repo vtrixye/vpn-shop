@@ -59,7 +59,7 @@ async def sub_dev(callback: CallbackQuery, session: AsyncSession):
     sub = await session.scalar(stmt)
 
     hw = await rw.get_user_devices(sub)
-    text = Text.sub_dev()
+    text = Text.sub_dev(hw.total)
     keyboard = kb.sub_dev(hw, short_uuid)
 
     await callback.message.edit_text(
