@@ -102,16 +102,18 @@ def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
     keyboard = InlineKeyboardBuilder()
 
     for dev in hw.devices:
+        text = f"{dev.user_agent.split('/')[0].upper()} {dev.device_model}"
+        text = text[:17] + "..." if len(text) > 20 else text
         keyboard.row(
             InlineKeyboardButton(
-                text=f"{dev.user_agent.split("/")[0].upper()} {dev.device_model[:15]}",
+                text=text,
                 icon_custom_emoji_id="5258236805890710909",
                 callback_data=f"dev:{dev.hwid}"
             )
         )
     
     keyboard.row(
-        InlineKeyboardButton(text="Назад", callback_data=f"sub:dev:{short_uuid}", icon_custom_emoji_id="5258236805890710909"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:{short_uuid}", icon_custom_emoji_id="5258236805890710909"),
     )
 
     return keyboard.as_markup()

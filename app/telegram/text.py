@@ -106,11 +106,16 @@ class Text:
                 text = "Введите уникальный username. Его нельзя изменить в будущем!"
         return text
     
-    def sub_dev():
-        return (
-            "## ![🕘](tg://emoji?id=5877318502947229960) Ваши устройства\n\n"
-            "Нажмите на устройство, чтобы "
-        )
+    def sub_dev(total: int):
+
+        text = "## ![🕘](tg://emoji?id=5877318502947229960) Ваши устройства\n\n"
+
+        if total == 0:
+            text += "Похоже, у вас нет подключенных устройств"
+        else:
+            text += "Нажмите на кнопку с устройством, чтобы удалить его"
+
+        return text
 
     def user_expired(sub: Subscription):
         return (
