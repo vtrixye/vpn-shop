@@ -77,7 +77,8 @@ async def sub_dev(callback: CallbackQuery, session: AsyncSession, state: FSMCont
 
 @user_router.callback_query(F.data.startswith("sub:"))
 async def sub_menu(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
-    await callback.answer()
+    #убрать потом
+    return await callback.answer("Разработчики sdk допустили ошибку в обновлении\n. Откат невозможен. Ждем фикс :(", show_alert=True)
     await state.clear()
 
     short_uuid = callback.data.split(":")[1]
