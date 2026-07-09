@@ -104,10 +104,15 @@ async def delete_device(callback: CallbackQuery, state: FSMContext, session: Asy
             "Ошибка состояния. Перезайдите во вкладку \"Устройства\" и повторите попытку.", 
             show_alert=True
         )
-    await rw.delete_device(uuid=state_data["uuid"], hwid=callback.data.split(":")[-1])
-    await callback.answer(
-        "Устройство удалено!"
-    )
+    if await rw.delete_device(uuid=state_data["uuid"], hwid=callback.data.split(":")[-1]):
+        await callback.answer(
+            "Устройство удалено!"
+        )
+    else:
+        await callback.answer(
+            "Ошибка удаления. Перезайдите во вкладку \"Устройства\" и повторите попытку.",
+            show_alert=True
+        )
 
     sub = await session.get(Subscription, state_data["uuid"])
 

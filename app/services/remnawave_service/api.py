@@ -93,5 +93,7 @@ async def delete_device(uuid: str, hwid: str):
         await remnawave.hwid.delete_hwid_to_user(
             HWIDDeleteRequest(user_uuid=uuid, hwid=hwid)
         )
+        return True
     except Exception as e:
         logger.error(f"Ошибка удаления устройства: \n{e}")
+        return False
