@@ -99,7 +99,7 @@ async def sub_menu(callback: CallbackQuery, session: AsyncSession, state: FSMCon
 @user_router.callback_query(F.data.startswith("dev:"))
 async def delete_device(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
     state_data = await state.get_data()
-    if state_data is None:
+    if state_data.get("uuid") is None:
         return await callback.answer(
             "Ошибка состояния. Перезайдите во вкладку \"Устройства\" и повторите попытку.", 
             show_alert=True

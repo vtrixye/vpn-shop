@@ -90,7 +90,6 @@ def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
         InlineKeyboardButton(text="Копировать ссылку", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5260416304224936047"),
-        InlineKeyboardButton(text="Подключить", callback_data="connect", icon_custom_emoji_id="5260416304224936047"),
         InlineKeyboardButton(text="Устройства", callback_data=f"sub:dev:{sub.short_uuid}", icon_custom_emoji_id="5877318502947229960"),
         InlineKeyboardButton(text="Назад", callback_data="my_subs", icon_custom_emoji_id="5258236805890710909")
     )
@@ -103,7 +102,7 @@ def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
 
     for dev in hw.devices:
         text = f"{dev.user_agent.split('/')[0].upper()} {dev.device_model}"
-        text = text[:17] + "..." if len(text) > 20 else text
+        text = text[:27] + "..." if len(text) > 30 else text
         keyboard.row(
             InlineKeyboardButton(
                 text=text,
