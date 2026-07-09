@@ -2,7 +2,7 @@ import os
 import uuid as uuid_lib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, List, Union
-from remnawave.models import CreateUserRequestDto, UserResponseDto
+from remnawave.models import CreateUserRequestDto, UserResponseDto, HWIDDeleteRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Subscription, User
@@ -87,3 +87,11 @@ async def get_user_devices(sub: Subscription):
         return hw
     except Exception as e:
         logger.error(f"Ошибка получения устройств: \n{e}")
+
+async def delete_device(uuid: str, hwid: str):
+    try:
+        await remnawave.hwid.delete_hwid_to_user(
+            HWIDDeleteRequest(user_uuid=uuid, hwid=hwid)
+        )
+    except Exception as e:
+        logger.error(f"Ошибка удаления устройства: \n{e}")

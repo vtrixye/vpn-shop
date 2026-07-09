@@ -1,6 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, InputRichMessage
 from aiogram.filters import Command, CommandObject
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -50,13 +52,19 @@ async def my_subs(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )
 
+class DevicesState(StatesGroup):
+    menu= State()
+
 @user_router.callback_query(F.data.startswith("sub:dev:"))
-async def sub_dev(callback: CallbackQuery, session: AsyncSession):
+async def sub_dev(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
     await callback.answer()
     short_uuid = callback.data.split(":")[-1]
 
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
     sub = await session.scalar(stmt)
+
+    await state.set_state(DevicesState.menu)
+    await state.update_data(uuid=str(sub.uuid))
 
     hw = await rw.get_user_devices(sub)
     text = Text.sub_dev(hw.total)
@@ -68,8 +76,10 @@ async def sub_dev(callback: CallbackQuery, session: AsyncSession):
     )
 
 @user_router.callback_query(F.data.startswith("sub:"))
-async def sub_menu(callback: CallbackQuery, session: AsyncSession):
+async def sub_menu(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
     await callback.answer()
+    await state.clear()
+
     short_uuid = callback.data.split(":")[1]
 
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
@@ -81,6 +91,30 @@ async def sub_menu(callback: CallbackQuery, session: AsyncSession):
     hw = await rw.get_user_devices(sub)
     text = Text.sub_menu(sub, hw.total)
     keyboard = kb.sub_menu(sub)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@user_router.callback_query(F.data.startswith("dev:"))
+async def delete_device(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
+    state_data = await state.get_data()
+    if state_data is None:
+        return await callback.answer(
+            "Ошибка состояния. Перезайдите во вкладку \"Устройства\" и повторите попытку.", 
+            show_alert=True
+        )
+    await rw.delete_device(uuid=state_data["uuid"], hwid=callback.data.split(":")[-1])
+    await callback.answer(
+        "Устройство удалено!"
+    )
+
+    sub = await session.get(Subscription, state_data["uuid"])
+
+    hw = await rw.get_user_devices(sub)
+    text = Text.sub_dev(hw.total)
+    keyboard = kb.sub_dev(hw, sub.short_uuid)
+
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard

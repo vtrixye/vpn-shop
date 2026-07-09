@@ -115,6 +115,9 @@ def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
     keyboard.row(
         InlineKeyboardButton(text="Назад", callback_data=f"sub:{short_uuid}", icon_custom_emoji_id="5258236805890710909"),
     )
+    keyboard.row(
+        InlineKeyboardButton(text="123456789012345678901234567890", callback_data=f"sub:{short_uuid}", icon_custom_emoji_id="5258236805890710909"),
+    )
 
     return keyboard.as_markup()
 
