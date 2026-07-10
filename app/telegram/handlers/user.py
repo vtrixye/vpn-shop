@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 import uuid as uuid_lib
+import asyncio
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
@@ -99,6 +100,7 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
             show_alert=True
         )
     
+    await asyncio.sleep(0.2)
     sub = await session.get(Subscription, sub.uuid)
     await callback.answer()
 
