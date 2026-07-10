@@ -77,6 +77,8 @@ async def update_squads(sub: Subscription, squad: Union[str, uuid_lib.UUID, Inte
             current_squads.remove(squad_uuid)
         else:
             current_squads.append(squad_uuid)
+
+        sub.squads = current_squads
         
         await remnawave.users.update_user(
             UpdateUserRequestDto(
