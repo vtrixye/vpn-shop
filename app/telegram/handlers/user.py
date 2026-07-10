@@ -93,7 +93,7 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
 
     name = callback.data.split(":")[-2]
 
-    if not rw.update_squads(sub, InternalSquad[name]):
+    if not await rw.update_squads(sub, InternalSquad[name]):
         return await callback.answer(
             "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
             show_alert=True
