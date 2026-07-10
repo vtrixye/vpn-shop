@@ -99,7 +99,8 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
             "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
             show_alert=True
         )
-    
+
+    await session.commit()
     session.expire_all()
     sub = await session.get(Subscription, sub.uuid)
     
