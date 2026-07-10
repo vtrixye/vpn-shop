@@ -1,13 +1,13 @@
 import os
 import uuid as uuid_lib
 from datetime import datetime, timedelta, timezone
-from typing import Optional, List, Union
+from typing import Optional, Sequence, Union
 from remnawave.models import CreateUserRequestDto, UserResponseDto, HWIDDeleteRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Subscription, User
 from services.remnawave_service import get_remnawave
-from services.remnawave_service.enums import UsernameType, ExpireType
+from services.remnawave_service.enums import UsernameType, ExpireType, InternalSquad
 from utils.logger import get_logger
 from utils import rand, time
 
@@ -17,7 +17,6 @@ DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 if not DEFAULT_SUB_USER_ID:
     raise ValueError("DEFAULT_SUB_USER_ID is not set in environment")
 
-DEFAULT_INTERNAL_SQUAD = uuid_lib.UUID("dee381c9-17dd-4221-ab57-511543f58d7b")
 remnawave = get_remnawave()
 
 async def create_user(
@@ -27,7 +26,7 @@ async def create_user(
         tag: Optional[str] = None,
         telegram_id: Union[str, int] = DEFAULT_SUB_USER_ID,
         hwid_device_limit: int = 2,
-        active_internal_squads: Optional[List[uuid_lib.UUID]] = None
+        active_internal_squads: Optional[Union[InternalSquad, Sequence[InternalSquad]]] = None
 ) -> UserResponseDto:
     
     if isinstance(username, UsernameType):
@@ -42,8 +41,7 @@ async def create_user(
 
     telegram_id = int(telegram_id)
 
-    if active_internal_squads is None:
-        active_internal_squads = [DEFAULT_INTERNAL_SQUAD]
+    active_internal_squads = InternalSquad.parse_squads(active_internal_squads)
 
     user = CreateUserRequestDto(
         username=username,
@@ -54,11 +52,13 @@ async def create_user(
         hwid_device_limit=hwid_device_limit,
         active_internal_squads=active_internal_squads
     )
-
-    remnawave.users.get_user_by_username
-    created_user = await remnawave.users.create_user(body=user)
-    logger.info(f"Отправлен запрос на создание пользователя {username}")
-    return created_user
+    try:
+        created_user = await remnawave.users.create_user(body=user)
+        logger.info(f"Отправлен запрос на создание пользователя {username}")
+        return created_user
+    except Exception as e:
+        logger.error(f"Ошибка создания пользователя\n{e}")
+        return False
 
 async def is_username_taken(username: str) -> bool:
     try:

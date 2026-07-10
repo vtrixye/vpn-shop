@@ -12,7 +12,7 @@ from database.crud import *
 from telegram.text import Text
 import telegram.keyboards.user as kb
 import services.remnawave_service.api as rw
-from services.remnawave_service.enums import UsernameType, ExpireType
+from services.remnawave_service.enums import UsernameType, ExpireType, InternalSquad
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -127,13 +127,18 @@ async def delete_device(callback: CallbackQuery, state: FSMContext, session: Asy
 
 @user_router.callback_query(F.data == "trial_sub")
 async def trial_sub(callback: CallbackQuery, session: AsyncSession):
-    await callback.answer()
 
-    await rw.create_user(
-        username=UsernameType.TRIAL, expire_at=ExpireType.DAY,
-        tag="TRIAL", telegram_id=callback.from_user.id
+    if not await rw.create_user(
+            username=UsernameType.TRIAL, expire_at=ExpireType.DAY,
+            tag="TRIAL", telegram_id=callback.from_user.id,
+            active_internal_squads=[InternalSquad.TCP, InternalSquad.CDN]
+    ):
+        return await callback.answer(
+            "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            show_alert=True
         )
 
+    await callback.answer()
     user = await session.get(User, callback.from_user.id)
     user.trial = False
     await session.commit()
