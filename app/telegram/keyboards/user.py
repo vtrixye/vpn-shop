@@ -106,8 +106,8 @@ def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Протоколы", callback_data=f"sub:sq:{sub.short_uuid}", icon_custom_emoji_id="5875431869842985304"),
         InlineKeyboardButton(text="Передать подписку", callback_data=f"sub:trans:{sub.short_uuid}", icon_custom_emoji_id="5954175920506933873"),
-        InlineKeyboardButton(text="Сброс ссылки", callback_data=f"sub:revoke:{sub.short_uuid}", icon_custom_emoji_id="5776375003280838798"),
-        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+        InlineKeyboardButton(text="Сброс ссылки", callback_data=f"sub:revoke:{sub.short_uuid}", icon_custom_emoji_id="5877465816030515018"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
     )
 
     keyboard.adjust(1, 1, 1, 1)
@@ -123,7 +123,9 @@ def sub_sq(sub: Subscription) -> InlineKeyboardMarkup:
             InlineKeyboardButton(text=squad.name, callback_data=f"sub:set:sq:{squad.name}:{sub.short_uuid}", icon_custom_emoji_id=emoji)
         )
     
-    keyboard.row(text="Назад", callback_data=f"sub:sq:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    keyboard.row(
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
 
     return keyboard.as_markup()
 
