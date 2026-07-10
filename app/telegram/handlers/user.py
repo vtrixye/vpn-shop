@@ -100,8 +100,7 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
             show_alert=True
         )
     
-    await asyncio.sleep(0.2)
-    sub = await session.get(Subscription, sub.uuid)
+    await session.refresh(sub)
     await callback.answer()
 
     text = Text.sub_sq()
