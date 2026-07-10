@@ -100,7 +100,10 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
             show_alert=True
         )
     
-    await session.refresh(sub)
+    session.expire_all()
+    sub = await session.get(Subscription, sub.uuid)
+    
+    await callback.answer()
     await callback.answer()
 
     text = Text.sub_sq()
