@@ -35,7 +35,7 @@ class Text:
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
     
-    def sub_opt(sub: Subscription):
+    def sub_opt():
         return (
             "## ![🛂](tg://emoji?id=5258096772776991776) Настройки подписки"
         )
