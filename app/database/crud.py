@@ -1,4 +1,5 @@
 import os
+import aiogram
 from datetime import timezone, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import User, Subscription
@@ -25,6 +26,14 @@ async def create_user(session: AsyncSession, id: int, name: str, username: str =
     await session.commit()
     logger.info(f"Пользователь {name} ID: {id} успешно создан")
     return user
+
+async def update_user(session: AsyncSession, from_user: aiogram.types.User):
+    user = await session.get(User, from_user.id)
+    
+    user.name = from_user.full_name
+    user.username = from_user.username
+    
+    await session.commit()
 
 async def create_sub(
         session: AsyncSession, 

@@ -16,14 +16,14 @@ class ExpireType(str, Enum):
     YEAR = "YEAR"
 
 class InternalSquad(str, Enum):
-    TCP = "dee381c9-17dd-4221-ab57-511543f58d7b"
-    XHTTP = "0482bba9-5c24-4f19-b3d9-74bc900cd947"
+    VLESS_TCP = "dee381c9-17dd-4221-ab57-511543f58d7b"
+    VLESS_XHTTP = "0482bba9-5c24-4f19-b3d9-74bc900cd947"
     HYSTERIA2 = "e7f87a6d-f70a-4f70-ac1b-909671fb09d3"
     CDN = "169aee30-d174-4510-9e2b-3a59cddc8e57"
 
     @classmethod
     def get_default(cls) -> List[UUID]:
-        return [UUID(cls.TCP.value)]
+        return [UUID(cls.VLESS_TCP.value)]
 
     @classmethod
     def parse_squads(cls, squads: Union['InternalSquad', Sequence['InternalSquad'], None]) -> List[UUID]:

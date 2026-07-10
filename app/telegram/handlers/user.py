@@ -5,6 +5,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+import uuid as uuid_lib
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User
@@ -22,7 +23,8 @@ user_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 user_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
 @user_router.callback_query(F.data == "main_menu")
-async def main_menu(callback: CallbackQuery, session: AsyncSession):
+async def main_menu(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
+    await state.clear()
     await callback.answer()
     text = Text.main_menu()
     keyboard = await kb.main_menu(session=session, id=callback.from_user.id)
@@ -32,8 +34,10 @@ async def main_menu(callback: CallbackQuery, session: AsyncSession):
     )
 
 @user_router.callback_query(F.data == "profile")
-async def profile(callback: CallbackQuery, session: AsyncSession):
+async def profile(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
     await callback.answer()
+    await state.clear()
+    await update_user(session, callback.from_user)
     text = await Text.profile(session, callback.from_user.id)
     keyboard = kb.profile()
     await callback.message.edit_text(
@@ -41,12 +45,83 @@ async def profile(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )
 
-
 @user_router.callback_query(F.data == "my_subs")
-async def my_subs(callback: CallbackQuery, session: AsyncSession):
+async def my_subs(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
+    await state.clear()
     await callback.answer()
     text = Text.my_subs()
     keyboard = await kb.my_subs(session=session, id=callback.from_user.id)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@user_router.callback_query(F.data.startswith("sub:sq:"))
+async def sub_sq(callback: CallbackQuery, session: AsyncSession):
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+
+    if sub.tag == "WHITE":
+        return await callback.answer(
+            "Для этого типа подписки недоступно изменение протоколов и транспортов",
+            show_alert=True
+        )
+    
+    await callback.answer()
+
+    text = Text.sub_sq()
+    keyboard = kb.sub_sq(sub)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@user_router.callback_query(F.data.startswith("sub:set:sq:"))
+async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+
+    name = callback.data.split(":")[-2]
+
+    if not rw.update_squads(sub, InternalSquad[name]):
+        return await callback.answer(
+            "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            show_alert=True
+        )
+    
+    await callback.answer()
+
+    text = Text.sub_sq()
+    keyboard = kb.sub_sq(sub)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@user_router.callback_query(F.data.startswith("sub:opt:"))
+async def sub_opt(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+
+    text = Text.sub_opt()
+    keyboard = kb.sub_opt(sub)
+
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
@@ -62,6 +137,9 @@ async def sub_dev(callback: CallbackQuery, session: AsyncSession, state: FSMCont
 
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
     sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
 
     await state.set_state(DevicesState.menu)
     await state.update_data(uuid=str(sub.uuid))
@@ -131,7 +209,7 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
     if not await rw.create_user(
             username=UsernameType.TRIAL, expire_at=ExpireType.DAY,
             tag="TRIAL", telegram_id=callback.from_user.id,
-            active_internal_squads=[InternalSquad.TCP, InternalSquad.CDN]
+            active_internal_squads=[InternalSquad.VLESS_TCP, InternalSquad.CDN]
     ):
         return await callback.answer(
             "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",

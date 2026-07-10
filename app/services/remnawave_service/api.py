@@ -2,7 +2,7 @@ import os
 import uuid as uuid_lib
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Sequence, Union
-from remnawave.models import CreateUserRequestDto, UserResponseDto, HWIDDeleteRequest
+from remnawave.models import CreateUserRequestDto, UserResponseDto, HWIDDeleteRequest, UpdateUserRequestDto
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.models import Subscription, User
@@ -58,6 +58,37 @@ async def create_user(
         return created_user
     except Exception as e:
         logger.error(f"Ошибка создания пользователя\n{e}")
+        return False
+
+async def update_squads(sub: Subscription, squad: Union[str, uuid_lib.UUID, InternalSquad]) -> bool:
+    try:
+        if isinstance(squad, InternalSquad):
+            squad_uuid = uuid_lib.UUID(squad.value)
+        elif isinstance(squad, uuid_lib.UUID):
+            squad_uuid = squad
+        elif isinstance(squad, str):
+            squad_uuid = uuid_lib.UUID(squad)
+        else:
+            raise ValueError(f"Неподдерживаемый тип внутреннего сквада: {type(squad)}")
+        
+        current_squads = list(sub.squads) if sub.squads else []
+        
+        if squad_uuid in current_squads:
+            current_squads.remove(squad_uuid)
+        else:
+            current_squads.append(squad_uuid)
+        
+        await remnawave.users.update_user(
+            UpdateUserRequestDto(
+                uuid=sub.uuid,
+                active_internal_squads=current_squads
+            )
+        )
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"Ошибка обновления внутренних сквадов \n{e}")
         return False
 
 async def is_username_taken(username: str) -> bool:

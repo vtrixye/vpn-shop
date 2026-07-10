@@ -9,7 +9,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder, ReplyKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from remnawave.models.hwid import GetUserHwidDevicesResponseDto
+import uuid as uuid_lib
 
+from services.remnawave_service.enums import InternalSquad
 from database.models import User, Subscription
 from utils.time import get_remaining_time
 from utils.logger import get_logger
@@ -91,14 +93,41 @@ def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
         InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
         InlineKeyboardButton(text="Копировать ссылку", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5258477770735885832"),
         InlineKeyboardButton(text="Устройства", callback_data=f"sub:dev:{sub.short_uuid}", icon_custom_emoji_id="5877318502947229960"),
-        #InlineKeyboardButton(text="Настройки", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258096772776991776"),
+        InlineKeyboardButton(text="Настройки", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258096772776991776"),
         InlineKeyboardButton(text="Назад", callback_data="my_subs", icon_custom_emoji_id="5258236805890710909")
     )
 
     keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
-def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str):
+def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Протоколы", callback_data=f"sub:sq:{sub.short_uuid}", icon_custom_emoji_id="5875431869842985304"),
+        InlineKeyboardButton(text="Передать подписку", callback_data=f"sub:trans:{sub.short_uuid}", icon_custom_emoji_id="5954175920506933873"),
+        InlineKeyboardButton(text="Сброс ссылки", callback_data=f"sub:revoke:{sub.short_uuid}", icon_custom_emoji_id="5776375003280838798"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
+
+    keyboard.adjust(1, 1, 1, 1)
+    return keyboard.as_markup()
+
+def sub_sq(sub: Subscription) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    for squad in InternalSquad:
+        if squad is InternalSquad.CDN: continue
+        emoji = "5778335621491723621" if uuid_lib.UUID(squad.value) in sub.squads else "5994324703559290598"
+        keyboard.row(
+            InlineKeyboardButton(text=squad.name, callback_data=f"sub:set:sq:{squad.name}:{sub.short_uuid}", icon_custom_emoji_id=emoji)
+        )
+    
+    keyboard.row(text="Назад", callback_data=f"sub:sq:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+
+    return keyboard.as_markup()
+
+def sub_dev(hw: GetUserHwidDevicesResponseDto, short_uuid: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     for dev in hw.devices:

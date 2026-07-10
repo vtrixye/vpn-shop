@@ -34,6 +34,20 @@ class Text:
         return (
             "## ![🛂](tg://emoji?id=5257965174979042426) Мои подписки"
         )
+    
+    def sub_opt(sub: Subscription):
+        return (
+            "## ![🛂](tg://emoji?id=5258096772776991776) Настройки подписки"
+        )
+
+    def sub_sq():
+        return (
+            "## ![🛂](tg://emoji?id=5875431869842985304) Управление протоколами и транспортами  \n\n"
+            "> ![🛂](tg://emoji?id=5447644880824181073) Обратите внимание  \n"
+            "> Не все приложения поддерживают стабильную работу каждого транспорта и протокола. "
+            "> Вносите изменения, только если знаете, что делаете."
+        )
+
     def sub_menu(sub: Subscription, total: int):
         remaining = get_remaining_time(sub.expire_at)
         devices = f"{int(total)} из {sub.hwid_device_limit or '∞'}"
