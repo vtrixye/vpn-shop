@@ -15,15 +15,15 @@ class ExpireType(str, Enum):
     SIX_MONTHS = "6MONTH"
     YEAR = "YEAR"
 
-class InternalSquad(UUID, Enum):
-    TCP = UUID("dee381c9-17dd-4221-ab57-511543f58d7b")
-    XHTTP = UUID("0482bba9-5c24-4f19-b3d9-74bc900cd947")
-    HYSTERIA2 = UUID("e7f87a6d-f70a-4f70-ac1b-909671fb09d3")
-    CDN = UUID("169aee30-d174-4510-9e2b-3a59cddc8e57")
+class InternalSquad(str, Enum):
+    TCP = "dee381c9-17dd-4221-ab57-511543f58d7b"
+    XHTTP = "0482bba9-5c24-4f19-b3d9-74bc900cd947"
+    HYSTERIA2 = "e7f87a6d-f70a-4f70-ac1b-909671fb09d3"
+    CDN = "169aee30-d174-4510-9e2b-3a59cddc8e57"
 
     @classmethod
     def get_default(cls) -> List[UUID]:
-        return [cls.TCP.value]
+        return [UUID(cls.TCP.value)]
 
     @classmethod
     def parse_squads(cls, squads: Union['InternalSquad', Sequence['InternalSquad'], None]) -> List[UUID]:
@@ -31,11 +31,11 @@ class InternalSquad(UUID, Enum):
             return cls.get_default()
         
         if isinstance(squads, InternalSquad):
-            return [squads.value]
+            return [UUID(squads.value)]
         
         if isinstance(squads, (list, tuple)):
             if not squads:
                 return cls.get_default()
-            return [squad.value if isinstance(squad, InternalSquad) else squad for squad in squads]
+            return [UUID(squad.value) if isinstance(squad, InternalSquad) else squad for squad in squads]
         
         raise ValueError(f"Неподдерживаемый тип для squads: {type(squads)}")
