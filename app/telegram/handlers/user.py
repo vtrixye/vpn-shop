@@ -149,7 +149,7 @@ async def transfer_to(message: Message, state: FSMContext, session: AsyncSession
 
     data = await state.get_data()
     telegram = message.text.strip()
-    if telegram.isdigit() and len(telegram) == 10:
+    if telegram.isdigit() and len(telegram) in (9, 10, 11):
         user = await session.get(User, int(telegram))
         if user is not None and user.id == message.from_user.id:
             text = "![❌](tg://emoji?id=5260342697075416641) Нельзя передать подписку себе :("
@@ -190,7 +190,7 @@ async def trans(callback: CallbackQuery, session: AsyncSession):
         )
     
     text = Text.my_subs()
-    keyboard = kb.my_subs(session=AsyncSession, id=callback.from_user.id)
+    keyboard = await kb.my_subs(session=AsyncSession, id=callback.from_user.id)
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),

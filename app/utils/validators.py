@@ -46,7 +46,7 @@ async def validate_hwid(text: str) -> tuple[bool, any]:
 
 async def validate_telegram(text: str) -> tuple[bool, any]:
     tg = text.strip()
-    if tg.isdigit() and len(tg) == 10:
+    if tg.isdigit() and len(tg) in (9, 10, 11):
         return True, int(tg)
     return False, "![❌](tg://emoji?id=5260342697075416641) Введите Telegram ID (цифры)"
 
