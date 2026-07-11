@@ -12,6 +12,11 @@ class Text:
     def main_menu():
         return "## Главное меню"
     
+    def info():
+        return (
+            "## ![](tg://emoji?id=5879785854284599288) Информация\n\n"
+        )
+
     def trial_sub():
         return (
             "## ![🎉](tg://emoji?id=5382194935057372936) Пробный период активирован!\n\n"

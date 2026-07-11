@@ -29,12 +29,25 @@ async def main_menu(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
     keyboard.row( InlineKeyboardButton(text="Профиль", icon_custom_emoji_id="5258011929993026890", callback_data="profile"))
 
     keyboard.row(
-        InlineKeyboardButton(text="Поддержка",icon_custom_emoji_id="5258503720928288433", callback_data="help"),
+        InlineKeyboardButton(text="Информация",icon_custom_emoji_id="5258503720928288433", callback_data="info"),
         InlineKeyboardButton(text="Канал", icon_custom_emoji_id="5260268501515377807", callback_data="chaneltest")
     )
     if user.admin:
         keyboard.row(InlineKeyboardButton(text="Админ панель", icon_custom_emoji_id="5258096772776991776", callback_data="admin_menu"))
     
+    return keyboard.as_markup()
+
+def info() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Политика конфиденциальности", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Politika-konfidencialnosti-06-21-31"),
+        InlineKeyboardButton(text="Пользовательское соглашение", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19"),
+        InlineKeyboardButton(text="Поддержка", icon_custom_emoji_id="5884123981706956210", url="https://telegra.ph/Test-07-11-430"),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
+    )
+
+    keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
 def trial_sub() -> InlineKeyboardMarkup:

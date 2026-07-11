@@ -34,6 +34,16 @@ async def main_menu(callback: CallbackQuery, session: AsyncSession, state: FSMCo
         reply_markup=keyboard
     )
 
+@user_router.callback_query(F.data == "info")
+async def info(callback: CallbackQuery):
+    await callback.answer()
+    text = Text.info()
+    keyboard = kb.info()
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
 @user_router.callback_query(F.data == "profile")
 async def profile(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
     await callback.answer()
