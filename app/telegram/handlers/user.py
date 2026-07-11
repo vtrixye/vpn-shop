@@ -145,6 +145,8 @@ async def sub_trans(callback: CallbackQuery, session: AsyncSession, state: FSMCo
 
 @user_router.message(TransferState.wait_for_id, F.text)
 async def transfer_to(message: Message, state: FSMContext, session: AsyncSession):
+    await message.delete()
+
     data = await state.get_data()
     telegram = message.text.strip()
     if telegram.isdigit() and len(telegram) == 10:
@@ -162,6 +164,7 @@ async def transfer_to(message: Message, state: FSMContext, session: AsyncSession
         keyboard = kb.transfer_to(short_uuid=data.get("short_uuid"))
 
     await message.bot.edit_message_text(
+        chat_id=message.chat.id,
         message_id=data.get("mes_id"),
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
