@@ -126,12 +126,21 @@ def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
-def transfer_to(user: User, short_uuid: str):
+def sub_trans(sub: Subscription):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
+
+    return keyboard.as_markup()  
+
+def transfer_to(short_uuid: str, user: User | None = None):
     keyboard = InlineKeyboardBuilder()
 
     if user is not None:
         keyboard.row(
-            InlineKeyboardButton(text="Подтверждаю", callback_data=f"trans:{user.id}:{short_uuid}", icon_custom_emoji_id="5776375003280838798")
+            InlineKeyboardButton(text="Подтвердить", callback_data=f"trans:{user.id}:{short_uuid}", icon_custom_emoji_id="5776375003280838798")
         )
 
     keyboard.row(

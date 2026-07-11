@@ -60,6 +60,23 @@ async def create_user(
         logger.error(f"Ошибка создания пользователя\n{e}")
         return False
 
+async def transfer(sub: Subscription, telegram: int, session: AsyncSession):
+    try:
+        await remnawave.users.update_user(
+            UpdateUserRequestDto(
+                uuid=sub.uuid,
+                telegram_id=telegram
+            )
+        )
+
+        sub.user_id = telegram
+        await session.commit()
+        return True
+        
+    except Exception as e:
+        logger.error(f"Ошибка передачи подписки \n{e}")
+        return False
+
 async def update_squads(sub: Subscription, squad: Union[str, uuid_lib.UUID, InternalSquad]) -> bool:
     try:
         if isinstance(squad, InternalSquad):

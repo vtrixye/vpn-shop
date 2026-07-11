@@ -137,30 +137,64 @@ async def sub_trans(callback: CallbackQuery, session: AsyncSession, state: FSMCo
     await state.set_data({"short_uuid": sub.short_uuid, "mes_id": callback.message.message_id})
 
     text = Text.sub_trans()
-    keyboard = kb.sub_trans()
+    keyboard = kb.sub_trans(sub)
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
 
-
 @user_router.message(TransferState.wait_for_id, F.text)
 async def transfer_to(message: Message, state: FSMContext, session: AsyncSession):
-    data = state.get_data()
+    data = await state.get_data()
     telegram = message.text.strip()
     if telegram.isdigit() and len(telegram) == 10:
         user = await session.get(User, int(telegram))
-        text = Text.transfer_to()
-        keyboard = kb.transfer_to(user)
+        if user is not None and user.id == message.from_user.id:
+            text = "![❌](tg://emoji?id=5260342697075416641) Нельзя передать подписку себе :("
+            keyboard = kb.transfer_to(short_uuid=data.get("short_uuid"))
+        else:
+            text = Text.transfer_to(user)
+            keyboard = kb.transfer_to(short_uuid=data.get("short_uuid"), user=user)
+            if user is not None:
+                await state.clear()
     else:
         text = "![❌](tg://emoji?id=5260342697075416641) Введите Telegram ID (цифры)"
-    
+        keyboard = kb.transfer_to(short_uuid=data.get("short_uuid"))
 
     await message.bot.edit_message_text(
-        message_id=data["mes_id"],
+        message_id=data.get("mes_id"),
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
+
+@user_router.callback_query(F.data.startswith("trans:"))
+async def trans(callback: CallbackQuery, session: AsyncSession):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+
+    telegram = int(callback.data.split(":")[1])
+
+    if not rw.transfer(sub, telegram, session):
+        return await callback.answer(
+            text="Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            show_alert=True
+        )
+    
+    text = Text.my_subs()
+    keyboard = kb.my_subs(session=AsyncSession, id=callback.from_user.id)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )    
+
+
 
 @user_router.callback_query(F.data.startswith("sub:opt:"))
 async def sub_opt(callback: CallbackQuery, session: AsyncSession):
