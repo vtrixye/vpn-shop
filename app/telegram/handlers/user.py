@@ -109,6 +109,49 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )
 
+class TransferState(StatesGroup):
+    wait_for_id = State()
+
+@user_router.callback_query(F.data.startswith("sub:trans:"))
+async def sub_trans(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+    
+    await state.set_state(TransferState.wait_for_id)
+    await state.set_data({"short_uuid": sub.short_uuid, "mes_id": callback.message.message_id})
+
+    text = Text.sub_trans()
+    keyboard = kb.sub_trans()
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+
+@user_router.message(TransferState.wait_for_id, F.text)
+async def transfer_to(message: Message, state: FSMContext, session: AsyncSession):
+    data = state.get_data()
+    telegram = message.text.strip()
+    if telegram.isdigit() and len(telegram) == 10:
+        user = await session.get(User, int(telegram))
+        text = Text.transfer_to()
+        keyboard = kb.transfer_to(user)
+    else:
+        text = "![❌](tg://emoji?id=5260342697075416641) Введите Telegram ID (цифры)"
+    
+
+    await message.bot.edit_message_text(
+        message_id=data["mes_id"],
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
 @user_router.callback_query(F.data.startswith("sub:opt:"))
 async def sub_opt(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
