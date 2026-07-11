@@ -183,7 +183,7 @@ async def trans(callback: CallbackQuery, session: AsyncSession):
 
     telegram = int(callback.data.split(":")[1])
 
-    if not rw.transfer(sub, telegram, session):
+    if not await rw.transfer(sub, telegram, session):
         return await callback.answer(
             text="Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
             show_alert=True
