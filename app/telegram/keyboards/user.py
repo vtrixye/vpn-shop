@@ -30,7 +30,7 @@ async def main_menu(session: AsyncSession, id: int) -> InlineKeyboardMarkup:
 
     keyboard.row(
         InlineKeyboardButton(text="Поддержка",icon_custom_emoji_id="5258503720928288433", callback_data="help"),
-        InlineKeyboardButton(text="Канал", icon_custom_emoji_id="5260268501515377807", url="https://t.me/so2melon")
+        InlineKeyboardButton(text="Канал", icon_custom_emoji_id="5260268501515377807", callback_data="chaneltest")
     )
     if user.admin:
         keyboard.row(InlineKeyboardButton(text="Админ панель", icon_custom_emoji_id="5258096772776991776", callback_data="admin_menu"))
@@ -111,6 +111,20 @@ def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
     )
 
     keyboard.adjust(1, 1, 1, 1)
+    return keyboard.as_markup()
+
+def transfer_to(user: User, short_uuid: str):
+    keyboard = InlineKeyboardBuilder()
+
+    if user is not None:
+        keyboard.row(
+            InlineKeyboardButton(text="Подтверждаю", callback_data=f"trans:{user.id}:{short_uuid}", icon_custom_emoji_id="5776375003280838798")
+        )
+
+    keyboard.row(
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
+
     return keyboard.as_markup()
 
 def sub_sq(sub: Subscription) -> InlineKeyboardMarkup:
