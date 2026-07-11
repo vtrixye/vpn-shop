@@ -43,7 +43,7 @@ def info() -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Политика конфиденциальности", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Politika-konfidencialnosti-06-21-31"),
         InlineKeyboardButton(text="Пользовательское соглашение", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19"),
-        InlineKeyboardButton(text="Поддержка", icon_custom_emoji_id="5884123981706956210", url="https://telegra.ph/Test-07-11-430"),
+        InlineKeyboardButton(text="Поддержка", icon_custom_emoji_id="5884123981706956210", url="https://t.me/test111support"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
     )
 
