@@ -18,6 +18,9 @@ payment_router = Router()
 payment_router.message.filter(ChatTypeFilter(['private']), IsBlocked())
 payment_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 
+class BuySubState(StatesGroup):
+    wait_devices = State()
+
 class TopUpState(StatesGroup):
     wait_amount = State()
 
@@ -37,16 +40,13 @@ async def buy_sub(callback: CallbackQuery, state: FSMContext):
         reply_markup=keyboard
     )
 
-class BuySubState(StatesGroup):
-    wait_devices = State()
-
 @payment_router.callback_query(F.data.startswith("buy_month_"))
 async def buy_month(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     time = int(callback.data.split("_")[-1])
     await state.set_state(BuySubState.wait_devices)
     amount = price_list["time"][time]
-    await state.set_data({"time": time, "devices": 1, "amount": amount})
+    await state.set_data({"time": time, "devices": 1, "amount": amount, "sub": "new"})
 
     text = Text.buy_devices()
     keyboard = await kb.buy_devices(state)
@@ -58,9 +58,15 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
 
 @payment_router.callback_query(F.data.startswith("buy_dev_"))
 async def buy_dev(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
     devices = int(callback.data.split("_")[-1])
     data = await state.get_data()
+    if data.get("time") is None or data.get("sub") is None:
+        return await callback.answer(
+            text=Text.state_error(),
+            show_alert=True
+        )
+    await state.set_state(BuySubState.wait_devices)
+    await callback.answer()
     amount = price_list["time"][data["time"]] + price_list["device"] * (devices - 1)
     await state.update_data({"devices": devices, "amount": amount})
 
@@ -74,8 +80,18 @@ async def buy_dev(callback: CallbackQuery, state: FSMContext):
 
 @payment_router.callback_query(F.data == "pay_sub")
 async def pay_sub(callback: CallbackQuery, state: FSMContext):
-    await callback.answer()
     data = await state.get_data()
+
+    if data.get("sub") is None or data.get("amount") is None \
+        or data.get("devices") is None or data.get("time") is None:
+        return await callback.answer(
+            text=Text.state_error(),
+            show_alert=True
+        )
+    
+    await state.set_state(Payment.wait_for_method)
+    
+    await callback.answer()
 
     text = Text.payment(data["amount"])
     keyboard = kb.payment(back=f"buy_dev_{data["devices"]}")

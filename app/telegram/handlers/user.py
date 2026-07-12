@@ -106,7 +106,7 @@ async def sub_set_sq(callback: CallbackQuery, session: AsyncSession):
 
     if not await rw.update_squads(sub, InternalSquad[name]):
         return await callback.answer(
-            "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            text=Text.unknown_error(),
             show_alert=True
         )
 
@@ -185,7 +185,7 @@ async def trans(callback: CallbackQuery, session: AsyncSession):
 
     if not await rw.transfer(sub, telegram, session):
         return await callback.answer(
-            text="Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            text=Text.unknown_error(),
             show_alert=True
         )
     
@@ -270,7 +270,7 @@ async def delete_device(callback: CallbackQuery, state: FSMContext, session: Asy
     state_data = await state.get_data()
     if state_data.get("uuid") is None:
         return await callback.answer(
-            "Ошибка состояния. Перезайдите во вкладку \"Устройства\" и повторите попытку.", 
+            text=Text.state_error(), 
             show_alert=True
         )
     if await rw.delete_device(uuid=state_data["uuid"], hwid=callback.data.split(":")[-1]):
@@ -279,7 +279,7 @@ async def delete_device(callback: CallbackQuery, state: FSMContext, session: Asy
         )
     else:
         await callback.answer(
-            "Ошибка удаления. Перезайдите во вкладку \"Устройства\" и повторите попытку.",
+            text=Text.state_error(),
             show_alert=True
         )
 
@@ -303,7 +303,7 @@ async def trial_sub(callback: CallbackQuery, session: AsyncSession):
             active_internal_squads=[InternalSquad.VLESS_TCP, InternalSquad.CDN]
     ):
         return await callback.answer(
-            "Произошла неизвестная ошибка...\nПовторите попытку или обратитесь в поддержку 🫤",
+            text=Text.unknown_error(),
             show_alert=True
         )
 
