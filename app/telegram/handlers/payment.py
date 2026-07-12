@@ -48,7 +48,7 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
     amount = price_list["time"][time]
     await state.set_data({"time": time, "devices": 1, "amount": amount, "sub": "new"})
 
-    text = Text.buy_devices()
+    text = Text.buy_devices(time)
     keyboard = await kb.buy_devices(state)
 
     await callback.message.edit_text(
@@ -59,6 +59,11 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
 @payment_router.callback_query(F.data.startswith("buy_dev_"))
 async def buy_dev(callback: CallbackQuery, state: FSMContext):
     devices = int(callback.data.split("_")[-1])
+    if devices > 6 or devices < 1:
+        return await callback.answer(
+            text=Text.unknown_error(),
+            show_alert=True
+        )
     data = await state.get_data()
     if data.get("time") is None or data.get("sub") is None:
         return await callback.answer(
@@ -67,10 +72,10 @@ async def buy_dev(callback: CallbackQuery, state: FSMContext):
         )
     await state.set_state(BuySubState.wait_devices)
     await callback.answer()
-    amount = price_list["time"][data["time"]] + price_list["device"] * (devices - 1)
+    amount = price_list["time"][data["time"]] + price_list["device"][data["time"]] * (devices - 1)
     await state.update_data({"devices": devices, "amount": amount})
 
-    text = Text.buy_devices()
+    text = Text.buy_devices(data["time"])
     keyboard = await kb.buy_devices(state)
 
     await callback.message.edit_text(

@@ -13,10 +13,10 @@ class Text:
     def main_menu():
         return "## Главное меню"
     
-    def buy_devices():
+    def buy_devices(time: int):
         return (
             "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
-            f'> {price_list["device"]}₽ за дополнительное устройство'
+            f'> {price_list["device"][time]}₽ за дополнительное устройство'
         )
 
     def buy_sub():
