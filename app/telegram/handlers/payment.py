@@ -10,6 +10,7 @@ from services.cryptopay_service import get_cryptopay
 from services.cryptopay_service.models import PaymentData
 from telegram.filters import ChatTypeFilter, IsBlocked
 from utils.logger import get_logger
+from utils.pricing import price_list
 
 logger = get_logger(__name__)
 
@@ -22,6 +23,67 @@ class TopUpState(StatesGroup):
 
 class Payment(StatesGroup):
     wait_for_method = State()
+
+@payment_router.callback_query(F.data == "buy_sub")
+async def buy_sub(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    await state.clear()
+
+    text = Text.buy_sub()
+    keyboard = kb.buy_sub()
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+class BuySubState(StatesGroup):
+    wait_devices = State()
+
+@payment_router.callback_query(F.data.startswith("buy_month_"))
+async def buy_month(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    time = int(callback.data.split("_")[-1])
+    await state.set_state(BuySubState.wait_devices)
+    amount = price_list["time"][time] + price_list["device"]
+    await state.set_data({"time": time, "devices": 1, "amount": amount})
+
+    text = Text.buy_devices()
+    keyboard = await kb.buy_devices(state)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@payment_router.callback_query(F.data.startswith("buy_dev_"))
+async def buy_dev(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    devices = int(callback.data.split("_")[-1])
+
+    await state.update_data({"devices": devices})
+
+    text = Text.buy_devices()
+    keyboard = await kb.buy_devices(state)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@payment_router.callback_query(F.data == "pay_sub")
+async def pay_sub(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    data = await state.get_data()
+
+    text = Text.payment()
+    keyboard = kb.payment(back=f"buy_dev_{data["devices"]}")
+    
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
 
 @payment_router.callback_query(TopUpState.wait_amount, F.data.startswith("top_up_"))
 async def top_up_amount(callback: CallbackQuery, state: FSMContext):

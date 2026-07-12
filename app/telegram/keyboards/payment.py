@@ -1,7 +1,37 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import User
+
+def buy_sub():
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="1 месяц", callback_data="buy_month_1", icon_custom_emoji_id="5778605968208170641"),
+        InlineKeyboardButton(text="3 месяца", callback_data="buy_month_3", icon_custom_emoji_id="5776213190387961618"),
+        InlineKeyboardButton(text="6 месяцев", callback_data="buy_month_6", icon_custom_emoji_id="5778605968208170641"),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu")
+    )
+    keyboard.adjust(1, 1, 1)
+    return keyboard.as_markup()
+
+async def buy_devices(state: FSMContext):
+    keyboard = InlineKeyboardBuilder()
+
+    data = await state.get_data()
+
+    for i in range(6):
+        emoji = "5778335621491723621" if data["devices"] == i else "5994324703559290598"
+        keyboard.add(
+            InlineKeyboardButton(text=f"{i} устр.", callback_data=f"buy_dev_{i}", icon_custom_emoji_id=emoji),
+        )
+
+    keyboard.add(
+        InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5927169041595634481", callback_data="pay_sub"),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=f"buy_sub")   
+    )
+    return keyboard.as_markup()
 
 def cryptopay_invoice(url: str, amount: int) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
@@ -41,9 +71,9 @@ def payment(back: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Yookassa", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
-        InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5260416304224936047", callback_data="crypto"),
-        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5260416304224936047", callback_data="pay_stars"),
+        InlineKeyboardButton(text="СБП", icon_custom_emoji_id="5363972466857252756", callback_data="12345"),
+        InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5361914370068613491", callback_data="12345"),
+        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5362006552951690043", callback_data="12345"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back),
     )
 

@@ -63,7 +63,7 @@ def profile() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Пополнить баланс", icon_custom_emoji_id="5258204546391351475", callback_data="top_up"),
+        InlineKeyboardButton(text="Пополнить баланс", icon_custom_emoji_id="5258204546391351475", callback_data="1top_up"),
         InlineKeyboardButton(text="Мои подписки", icon_custom_emoji_id="5257965174979042426", callback_data="my_subs"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
     )
