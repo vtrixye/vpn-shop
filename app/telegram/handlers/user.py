@@ -190,7 +190,7 @@ async def trans(callback: CallbackQuery, session: AsyncSession):
         )
     
     text = Text.my_subs()
-    keyboard = await kb.my_subs(session=AsyncSession, id=callback.from_user.id)
+    keyboard = await kb.my_subs(session=session, id=callback.from_user.id)
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
