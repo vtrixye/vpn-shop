@@ -21,7 +21,7 @@ async def buy_devices(state: FSMContext):
 
     data = await state.get_data()
 
-    for i in range(6):
+    for i in range(1, 7):
         emoji = "5778335621491723621" if data["devices"] == i else "5994324703559290598"
         keyboard.add(
             InlineKeyboardButton(text=f"{i} устр.", callback_data=f"buy_dev_{i}", icon_custom_emoji_id=emoji),
@@ -31,6 +31,8 @@ async def buy_devices(state: FSMContext):
         InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5927169041595634481", callback_data="pay_sub"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=f"buy_sub")   
     )
+
+    keyboard.adjust(2, 2, 2, 1, 1)
     return keyboard.as_markup()
 
 def cryptopay_invoice(url: str, amount: int) -> InlineKeyboardMarkup:
