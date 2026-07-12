@@ -77,7 +77,7 @@ async def pay_sub(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     data = await state.get_data()
 
-    text = Text.payment()
+    text = Text.payment(data["amount"])
     keyboard = kb.payment(back=f"buy_dev_{data["devices"]}")
 
     await callback.message.edit_text(

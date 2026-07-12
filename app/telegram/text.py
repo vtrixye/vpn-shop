@@ -16,15 +16,15 @@ class Text:
     def buy_devices():
         return (
             "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
-            f'> {price_list["device"]}![](tg://emoji?id=5359422245359860963) за дополнительное устройство'
+            f'> {price_list["device"]}₽ за дополнительное устройство'
         )
 
     def buy_sub():
         return (
             "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
-            f'>  1 месяц - от {price_list["time"][1]}![](tg://emoji?id=5359422245359860963)  \n'
-            f'> 3 месяца - от {price_list["time"][3]}![](tg://emoji?id=5359422245359860963)  \n'
-            f'> 6 месяцев - от {price_list["time"][6]}![](tg://emoji?id=5359422245359860963)'
+            f'>  1 месяц - от {price_list["time"][1]}₽  \n'
+            f'> 3 месяца - от {price_list["time"][3]}₽  \n'
+            f'> 6 месяцев - от {price_list["time"][6]}₽'
         )
 
     def info():
@@ -210,10 +210,11 @@ class Text:
             "Введите сумму пополнения в рублях *(минимум 100)*:"
         )
     
-    def payment():
+    def payment(amount: int):
         return (
             "## ![💳](tg://emoji?id=5445353829304387411) Оплата\n\n"
-            "Выберите удобный способ оплаты ниже:"
+            "Выберите удобный способ оплаты ниже  \n"
+            f"###  {amount}₽"
         )
     
     def pay_stars():
