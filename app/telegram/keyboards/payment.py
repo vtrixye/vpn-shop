@@ -28,7 +28,7 @@ async def buy_devices(state: FSMContext):
         )
 
     keyboard.add(
-        InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5927169041595634481", callback_data="pay_sub"),
+        InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5445353829304387411", callback_data="pay_sub"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=f"buy_sub")   
     )
 
@@ -75,7 +75,7 @@ def payment(back: str) -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="СБП", icon_custom_emoji_id="5363972466857252756", callback_data="12345"),
         InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5361914370068613491", callback_data="12345"),
-        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5362006552951690043", callback_data="12345"),
+        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5897792062291449826", callback_data="12345"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back),
     )
 
