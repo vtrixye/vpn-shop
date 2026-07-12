@@ -45,7 +45,7 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     time = int(callback.data.split("_")[-1])
     await state.set_state(BuySubState.wait_devices)
-    amount = price_list["time"][time] + price_list["device"]
+    amount = price_list["time"][time]
     await state.set_data({"time": time, "devices": 1, "amount": amount})
 
     text = Text.buy_devices()
@@ -60,8 +60,9 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
 async def buy_dev(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     devices = int(callback.data.split("_")[-1])
-
-    await state.update_data({"devices": devices})
+    data = await state.get_data()
+    amount = price_list["time"][data["time"]] + price_list["device"] * (devices - 1)
+    await state.update_data({"devices": devices, "amount": amount})
 
     text = Text.buy_devices()
     keyboard = await kb.buy_devices(state)
@@ -78,7 +79,7 @@ async def pay_sub(callback: CallbackQuery, state: FSMContext):
 
     text = Text.payment()
     keyboard = kb.payment(back=f"buy_dev_{data["devices"]}")
-    
+
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
