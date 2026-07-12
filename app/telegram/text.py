@@ -16,15 +16,15 @@ class Text:
     def buy_sub():
         return (
             "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
-            f'> {price_list["devices"]}![](tg://emoji?id=5377746319601324795) за дополнительное устройство'
+            f'> {price_list["device"]}![](tg://emoji?id=5377746319601324795) за дополнительное устройство'
         )
 
     def buy_devices():
         return (
             "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
-            f'>  1 месяц - от {price_list["time"]["1"]}![](tg://emoji?id=5377746319601324795)  \n'
-            f'> 3 месяца - от {price_list["time"]["3"]}![](tg://emoji?id=5377746319601324795)  \n'
-            f'> 6 месяцев - от {price_list["time"]["6"]}![](tg://emoji?id=5377746319601324795)'
+            f'>  1 месяц - от {price_list["time"][1]}![](tg://emoji?id=5377746319601324795)  \n'
+            f'> 3 месяца - от {price_list["time"][3]}![](tg://emoji?id=5377746319601324795)  \n'
+            f'> 6 месяцев - от {price_list["time"][6]}![](tg://emoji?id=5377746319601324795)'
         )
 
     def info():
