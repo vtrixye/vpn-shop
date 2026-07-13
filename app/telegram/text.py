@@ -105,7 +105,12 @@ class Text:
             "## ![🛂](tg://emoji?id=5258096772776991776) Панель админа"
         )
 
-    async def subs_control(session: AsyncSession) -> str:
+    def stats():
+        return (
+            "## ![🛂](tg://emoji?id=5258096772776991776) Статистика"
+        )
+
+    async def users_stats(session: AsyncSession) -> str:
         result = await session.execute(
             select(
                 Subscription.status,
@@ -133,40 +138,42 @@ class Text:
         )
       
         return text
-    
-    def sub_create(data: dict = {}):
-        
-        username = data.get("username", "(не выбрано)")
-        expire_at = data.get("expire_at", "(не выбрано)")
-        hwid = data.get("hwid", "0")
-        telegram = data.get("telegram", DEFAULT_SUB_USER_ID)
 
-        return (
-            "## 📝 Создание подписки\n\n"
-            f'> ![🛂](tg://emoji?id=5814247475141153332) **Username:** `{username}`  \n'
-            f'> ![🕘](tg://emoji?id=5776213190387961618) **Истекает:** `{expire_at}`  \n'
-            f'> ![💻](tg://emoji?id=5877318502947229960) **Устройства:** `{hwid}`  \n'
-            f'> ![🚹](tg://emoji?id=5879770735999717115) **Владелец:** `{telegram}`'
+    async def subs_stats(session: AsyncSession) -> str:
+        result = await session.execute(
+            select(
+                Subscription.status,
+                func.count(Subscription.uuid)
+            )
+            .group_by(Subscription.status)
         )
-    
+        
+        stats = {status: count for status, count in result.all()}
+        
+        total = sum(stats.values())
+        
+        active = stats.get("ACTIVE", 0)
+        expired = stats.get("EXPIRED", 0)
+        disabled = stats.get("DISABLED", 0)
+        
+        text = (
+            '## ![📊](tg://emoji?id=5190806721286657692) Статистика подписок\n\n'
+            '| Статус | Количество |\n'
+            '| :--- | :---: |\n'
+            f'| ![📊](tg://emoji?id=5203993413346680064) **Всего** | `{total}` |\n'
+            f'| ![🟢](tg://emoji?id=5416081784641168838) **ACTIVE** | `{active}` |\n'
+            f'| ![🔴](tg://emoji?id=5411225014148014586) **EXPIRED** | `{expired}` |\n'
+            f'| ![🔘](tg://emoji?id=5240241223632954241) **DISABLED** | `{disabled}` |'
+        )
+      
+        return text
+       
     def sub_trans():
         return (
             "Введите Telegram ID пользователя, которому хотите передать подписку  \n"
             "> Пользователь должен быть зарегестрирован в боте. "
             "Для этого нужно только отправить команду /start"
         )
-    
-    def sub_editing(field_name: str):
-        match field_name:
-            case "expire_at":
-                text = "Введите число дней (например, 30) или дату в формате ДД.ММ.ГГГГ:"
-            case "hwid":
-                text = "Введите количество устройств"
-            case "telegram":
-                text = "Введите Telegram ID"
-            case "username":
-                text = "Введите уникальный username. Его нельзя изменить в будущем!"
-        return text
     
     def sub_dev(total: int):
 
