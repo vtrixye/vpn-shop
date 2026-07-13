@@ -15,7 +15,7 @@ class Text:
     
     def buy_devices(time: int):
         return (
-            "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы  \n\n"
+            "## ![🛂](tg://emoji?id=5983399041197675256) Тарифы 1 \n\n"
             f'> {price_list["device"][time]}₽ за дополнительное устройство'
         )
 
