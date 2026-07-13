@@ -1,7 +1,8 @@
 import os
 from sqlalchemy.ext.asyncio import AsyncSession
 from remnawave.models.webhook import NodeDto
-from sqlalchemy import select, func
+from sqlalchemy import select, func, distinct
+from sqlalchemy.orm import selectinload
 
 from database.models import User, Subscription
 from utils.time import get_remaining_time
@@ -11,7 +12,7 @@ DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
     def main_menu():
-        return "## ![🛂](tg://emoji?id=5350738242394137300) Добро пожаловать в GRAPE VPN 1"
+        return "## ![🛂](tg://emoji?id=5350738242394137300) Добро пожаловать в GRAPE VPN"
     
     def buy_devices(time: int):
         return (
@@ -111,32 +112,64 @@ class Text:
         )
 
     async def users_stats(session: AsyncSession) -> str:
-        result = await session.execute(
-            select(
-                Subscription.status,
-                func.count(Subscription.uuid)
-            )
-            .group_by(Subscription.status)
+        # Общее количество пользователей
+        total_result = await session.execute(
+            select(func.count(User.id))
+        )
+        total = total_result.scalar()
+        
+        # Количество пользователей, у которых trial = True (активен пробный период)
+        trial_result = await session.execute(
+            select(func.count(User.id))
+            .where(User.trial == False)
         )
         
-        stats = {status: count for status, count in result.all()}
+        # Количество пользователей с платной подпиской (хотя бы одна подписка с tag != "TRIAL")
+        paid_result = await session.execute(
+            select(func.count(distinct(User.id)))
+            .join(User.subscriptions)
+            .where(
+                Subscription.status == "ACTIVE",  # только активные подписки
+                Subscription.tag != "TRIAL"       # исключаем пробные
+            )
+        )
+        paid_count = paid_result.scalar() or 0
+         
+        # Количество пользователей с любой активной подпиской (status = "ACTIVE")
+        any_active_result = await session.execute(
+            select(func.count(distinct(User.id)))
+            .join(User.subscriptions)
+            .where(Subscription.status == "ACTIVE")
+        )
+        any_active_count = any_active_result.scalar() or 0
         
-        total = sum(stats.values())
+        # Заблокированные пользователи
+        blocked_result = await session.execute(
+            select(func.count(User.id))
+            .where(User.blocked == True)
+        )
+        blocked_count = blocked_result.scalar()
         
-        active = stats.get("ACTIVE", 0)
-        expired = stats.get("EXPIRED", 0)
-        disabled = stats.get("DISABLED", 0)
+        # Администраторы
+        admin_result = await session.execute(
+            select(func.count(User.id))
+            .where(User.admin == True)
+        )
+        admin_count = admin_result.scalar()
+        
         
         text = (
-            '## ![📊](tg://emoji?id=5190806721286657692) Статистика подписок\n\n'
-            '| Статус | Количество |\n'
+            '## ![📊](tg://emoji?id=5190806721286657692) Статистика пользователей\n\n'
+            '| Показатель | Количество |\n'
             '| :--- | :---: |\n'
-            f'| ![📊](tg://emoji?id=5203993413346680064) **Всего** | `{total}` |\n'
-            f'| ![🟢](tg://emoji?id=5416081784641168838) **ACTIVE** | `{active}` |\n'
-            f'| ![🔴](tg://emoji?id=5411225014148014586) **EXPIRED** | `{expired}` |\n'
-            f'| ![🔘](tg://emoji?id=5240241223632954241) **DISABLED** | `{disabled}` |'
+            f'| ![📊](tg://emoji?id=5203993413346680064) **Всего пользователей** | `{total}` |\n'
+            f'| ![🔘](tg://emoji?id=5416081784641168838) **Активировали TRIAL** | `{trial_result}` |\n'
+            f'| ![🟢](tg://emoji?id=5210952531676504517) **Платная подписка** | `{paid_count}` |\n'
+            f'| ![🔘](tg://emoji?id=5190806721286657692) **Всего с активной подпиской** | `{any_active_count}` |\n'
+            f'| ![🚫](tg://emoji?id=5240241223632954241) **Заблокированы** | `{blocked_count}` |\n'
+            f'| ![👑](tg://emoji?id=5210952531676504517) **Администраторы** | `{admin_count}` |\n'
         )
-      
+        
         return text
 
     async def subs_stats(session: AsyncSession) -> str:
