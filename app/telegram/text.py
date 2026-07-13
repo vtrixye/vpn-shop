@@ -11,7 +11,7 @@ DEFAULT_SUB_USER_ID = os.getenv("DEFAULT_SUB_USER_ID")
 
 class Text:
     def main_menu():
-        return "## Главное меню"
+        return "## ![🛂](tg://emoji?id=5350738242394137300) Добро пожаловать в GRAPE VPN"
     
     def buy_devices(time: int):
         return (
