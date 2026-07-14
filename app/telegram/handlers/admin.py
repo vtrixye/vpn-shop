@@ -8,6 +8,7 @@ from aiogram.filters import Command
 from sqlalchemy.ext.asyncio import AsyncSession
 from aiogram.exceptions import TelegramBadRequest
 
+from database.crud import *
 from telegram.filters import ChatTypeFilter, IsAdmin
 from telegram.text import Text
 import telegram.keyboards.admin as kb
@@ -24,6 +25,25 @@ async def cmd_admin(message: Message):
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
+
+@admin_router.message(Command("test"))
+async def cmd_test(message: Message, session: AsyncSession):
+    payment =await create_payment(
+        session=session,
+        user_id=message.from_user.id,
+        amount=100,
+        currency="RUB",
+        payment_type=None,
+        payment_method=None,
+        status=None,
+        data={"test": "test"}
+    )
+
+    text = f"Создана запись о платеже {payment.id} для пользователя {message.from_user.id}"
+    await message.answer_rich(
+        rich_message=InputRichMessage(markdown=text)
+    )
+
 
 @admin_router.callback_query(F.data == "admin_menu")
 async def admin_menu(callback: CallbackQuery):

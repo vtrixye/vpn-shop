@@ -1,8 +1,8 @@
 import os
 import aiogram
-from datetime import timezone, timedelta
+from datetime import timezone, timedelta, datetime
 from sqlalchemy.ext.asyncio import AsyncSession
-from database.models import User, Subscription
+from database.models import User, Subscription, Payment, PaymentType, PaymentMethod
 from utils.logger import get_logger
 from utils.time import utc_to_msk
 from typing import Union
@@ -107,3 +107,32 @@ async def update_sub(
     logger.info(
         f"Подписка {sub.username} изменена"
     )
+
+async def create_payment(
+        session: AsyncSession,
+        user_id: int,
+        amount: int,
+        currency: str,
+        payment_type: PaymentType = None,
+        payment_method: PaymentMethod = None,
+        status: str = None,
+        data: dict = None
+    ) -> Payment:
+    payment = Payment(
+        user_id=user_id,
+        amount=amount,
+        currency=currency,
+        type=payment_type,
+        method=payment_method,
+        status=status,
+        created_at=utc_to_msk(datetime.now(timezone.utc)),
+        data=data
+
+    )
+
+    session.add(payment)
+    await session.commit()
+    logger.info(
+        f"Создана запись о платеже {payment.id} для пользователя {user_id}"
+    )
+    return payment

@@ -1,8 +1,10 @@
-from sqlalchemy import String, Integer, BigInteger, DateTime, ForeignKey, Boolean
+from sqlalchemy import String, Integer, BigInteger, DateTime, ForeignKey, Boolean, Enum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
+import enum
 import uuid as uuid_lib
 
 class Base(DeclarativeBase):
@@ -24,6 +26,7 @@ class User(Base):
     trial: Mapped[bool] = mapped_column(Boolean, default=True)
 
     subscriptions: Mapped[List["Subscription"]] = relationship("Subscription", back_populates="user")
+    payments: Mapped[List["Payment"]] = relationship("Payment", back_populates="user")
 
 class Subscription(Base):
     """Remnawave user"""
@@ -61,3 +64,37 @@ class Subscription(Base):
         ARRAY(UUID(as_uuid=True), dimensions=1),
         default=list
     )
+
+class PaymentType(str, enum.Enum):
+    DEPOSIT = "deposit"
+    SUB_PURCHASE = "sub_purchase"
+    SUB_RENEWAL = "sub_renewal"
+    ADD_DEVICE = "add_device"
+    REFUND = "refund"
+    WITHDRAWAL = "withdrawal"
+    ADMIN_ADJUSTMENT = "admin_adjustment"
+
+class PaymentMethod(str, enum.Enum):
+    Platega = "Platega"
+    CryptoBot = "CryptoBot"
+    TelegramStars = "TelegramStars"
+    Balance = "Balance"
+
+class Payment(Base):
+    __tablename__ = "payments"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user: Mapped["User"] = relationship("User", back_populates="payments")
+
+    amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    currency: Mapped[str] = mapped_column(String(10), nullable=False)
+
+    type: Mapped[PaymentType] = mapped_column(Enum(PaymentType), nullable=True)
+    method: Mapped[PaymentMethod] = mapped_column(Enum(PaymentMethod), nullable=True)
+    status: Mapped[str] = mapped_column(String(20), nullable=True)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    
+    data: Mapped[Dict[str, Any]] = mapped_column(JSONB, default=dict, nullable=True)

@@ -4,3 +4,6 @@ __pycache__
 /.vscode
 update.sh
 /logs
+alembic/versions/*.pyc
+alembic/versions/__pycache__/
+*.pyc
