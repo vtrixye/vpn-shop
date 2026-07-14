@@ -33,9 +33,6 @@ async def cmd_test(message: Message, session: AsyncSession):
         user_id=message.from_user.id,
         amount=100,
         currency="RUB",
-        payment_type=None,
-        payment_method=None,
-        status=None,
         data={"test": "test"}
     )
 

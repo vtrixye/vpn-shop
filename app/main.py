@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from services.redis_service import init_redis, close_redis
 
 from telegram import init_dispatcher, setup_webhook, setup_middlewares, shutdown_bot
+from services.platega_service import init_platega, close_platega
 from webhooks import routers
 from database import create_db
 from utils.logger import get_logger
@@ -40,13 +41,16 @@ async def lifespan(app: FastAPI):
     await init_redis()
     init_remnawave()
     init_cryptopay(app=app)
+    init_platega()
     await init_db()
     await init_bot()
+
 
     yield
     
     await shutdown_bot()
     await close_redis()
+    await close_platega()
 
 app = FastAPI(lifespan=lifespan)
 
