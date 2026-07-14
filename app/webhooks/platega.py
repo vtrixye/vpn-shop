@@ -13,23 +13,14 @@ SECRET_KEY = os.getenv("PLATEGA_SECRET_KEY")
 @platega_router.post("/webhooks/platega")
 async def platega_webhook(
     request: Request,
-    x_merchant_id: str = Header(None),
+    x_merchantid: str = Header(None),
     x_secret: str = Header(None),
     ):
 
-    headers = dict(request.headers)
-    logger.info(f"Все заголовки: {headers}")
-
-    body = await request.json()
-
-    logger.info(f"Тело вебхука: {body}")
-
-    logger.info(f"Webhook: {x_merchant_id} {x_secret}")
-    if x_merchant_id != MERCHANT_ID or x_secret != SECRET_KEY:
-        logger.info(f"Must be {MERCHANT_ID} {SECRET_KEY}")
+    if x_merchantid != MERCHANT_ID or x_secret != SECRET_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized")
     
-
+    body = await request.json()
 
     await handling_webhook(body)
 
