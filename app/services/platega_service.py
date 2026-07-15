@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Any
 import os
+import json
 from plategaio import (
     PlategaAsyncClient,
     CreateTransactionRequest,
@@ -59,6 +60,8 @@ async def create_payment(
 ) -> Dict[str, Any]:
 
     client = get_platega_client()
+
+    payload = json.dumps(payload)
     
     try:
         request = CreateTransactionRequest(
@@ -110,7 +113,7 @@ async def handling_webhook(body: Dict[str, Any], session: AsyncSession) -> Dict[
     status = body.get("status")
     amount = body.get("amount")
     currency = body.get("currency")
-    payload = body.get("payload")
+    payload = json.loads(body.get("payload"))
 
     user_id = payload.get("user_id")
     type = PaymentType(payload.get("type"))
