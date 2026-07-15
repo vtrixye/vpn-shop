@@ -12,6 +12,7 @@ from database.crud import *
 from telegram.filters import ChatTypeFilter, IsAdmin
 from telegram.text import Text
 import telegram.keyboards.admin as kb
+import services.platega_service as platega
 
 admin_router = Router()
 admin_router.message.filter(ChatTypeFilter(['private', 'group']), IsAdmin())
@@ -26,19 +27,28 @@ async def cmd_admin(message: Message):
         reply_markup=keyboard
     )
 
-@admin_router.message(Command("test"))
-async def cmd_test(message: Message, session: AsyncSession):
-    payment =await create_payment(
-        session=session,
-        user_id=message.from_user.id,
-        amount=100,
-        currency="RUB",
-        data={"test": "test"}
+@admin_router.callback_query(F.data == "test")
+async def cmd_test(callback: CallbackQuery, session: AsyncSession):
+    result = await platega.create_payment(
+        amount=50,
+        description="api test",
+        payload={
+            "user_id": callback.from_user.id,
+            "mes_id": callback.message.message_id,
+            "excepted_amount": 50,
+            "type": "admin_adjustment"
+        }
     )
+    if result.get("success"):
+        text = f"Успех"
+        keyboard = kb.test_payment(url = result.get("redirect_url"))
+    else:
+        text = f"Не успех"
+        keyboard = kb.admin_menu()
 
-    text = f"Создана запись о платеже {payment.id} для пользователя {message.from_user.id}"
-    await message.answer_rich(
-        rich_message=InputRichMessage(markdown=text)
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
     )
 
 

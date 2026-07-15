@@ -52,8 +52,8 @@ async def create_payment(
     amount: float,
     currency: str = "RUB",
     description: str = "",
-    return_url: Optional[str] = None,
-    failed_url: Optional[str] = None,
+    return_url: str = "https://t.me/GrapeVpnRobot",
+    failed_url: str = "https://t.me/GrapeVpnRobot",
     payment_method: int = 2,
     payload: Optional[Dict] = None,
 ) -> Dict[str, Any]:
@@ -114,18 +114,19 @@ async def handling_webhook(body: Dict[str, Any], session: AsyncSession) -> Dict[
 
     user_id = payload.get("user_id")
     type = PaymentType(payload.get("type"))
+    excepted_amount = payload.get("excepted_amount")
 
     data = payload.copy()
     data.pop("user_id", None)
     data.pop("type", None)
-    data["transaction_id"] = transaction_id
-    data["platega_status"] = status
 
     payment = await db.create_payment(
         session=session,
         user_id=int(user_id),
-        amount=int(amount),
-        currency=currency,
+        amount=int(excepted_amount),
+        transaction_id=transaction_id,
+        paid_amount=int(amount),
+        paid_currency=currency,
         payment_method=PaymentMethod.Platega,
         payment_type=type,
         status=status,

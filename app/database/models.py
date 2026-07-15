@@ -84,12 +84,15 @@ class Payment(Base):
     __tablename__ = "payments"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    transaction_id: Mapped[str] = mapped_column(String(100), nullable=True)
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user: Mapped["User"] = relationship("User", back_populates="payments")
 
     amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    currency: Mapped[str] = mapped_column(String(10), nullable=False)
+
+    paid_amount: Mapped[int] = mapped_column(Integer, nullable=False)
+    paid_currency: Mapped[str] = mapped_column(String(10), nullable=False)
 
     type: Mapped[PaymentType] = mapped_column(Enum(PaymentType), nullable=True)
     method: Mapped[PaymentMethod] = mapped_column(Enum(PaymentMethod), nullable=True)

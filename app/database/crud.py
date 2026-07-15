@@ -112,16 +112,21 @@ async def create_payment(
         session: AsyncSession,
         user_id: int,
         amount: int,
-        currency: str,
+        paid_amount: int,
+        paid_currency: str,
+        transaction_id: str = None,
         payment_type: PaymentType = None,
         payment_method: PaymentMethod = None,
         status: str = None,
         data: dict = None
     ) -> Payment:
+
     payment = Payment(
         user_id=user_id,
+        transaction_id=transaction_id, 
         amount=amount,
-        currency=currency,
+        paid_amount=paid_amount,
+        paid_currency=paid_currency,
         type=payment_type,
         method=payment_method,
         status=status,
