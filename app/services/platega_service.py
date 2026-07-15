@@ -62,11 +62,11 @@ async def create_payment(
     
     try:
         request = CreateTransactionRequest(
-            payment_method=payment_method,
-            payment_details=PaymentDetails(amount=amount, currency=currency),
+            paymentMethod=payment_method,
+            paymentDetails=PaymentDetails(amount=amount, currency=currency),
             description=description,
-            return_url=return_url,
-            failed_url=failed_url,
+            returnUrl=return_url,
+            failedUrl=failed_url,
             payload=payload,
         )
         
