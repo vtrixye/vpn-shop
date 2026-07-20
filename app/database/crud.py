@@ -132,7 +132,6 @@ async def create_payment(
         status=status,
         created_at=utc_to_msk(datetime.now(timezone.utc)),
         data=data
-
     )
 
     session.add(payment)

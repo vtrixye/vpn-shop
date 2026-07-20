@@ -3,14 +3,17 @@ from aiogram.types import Message, CallbackQuery, InputRichMessage, LabeledPrice
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
+from database.models import Subscription
 from telegram.text import Text
 from telegram.keyboards import payment as kb
 from services.cryptopay_service import get_cryptopay
 from services.cryptopay_service.models import PaymentData
 from telegram.filters import ChatTypeFilter, IsBlocked
 from utils.logger import get_logger
-from utils.pricing import price_list
+from utils.pricing import *
+from utils.validators import validate_payment_state_data
 
 logger = get_logger(__name__)
 
@@ -21,11 +24,44 @@ payment_router.callback_query.filter(ChatTypeFilter(['private']), IsBlocked())
 class BuySubState(StatesGroup):
     wait_devices = State()
 
+class RenewSubState(StatesGroup):
+    wait_changes = State()
+
 class TopUpState(StatesGroup):
     wait_amount = State()
 
 class Payment(StatesGroup):
     wait_for_method = State()
+
+@payment_router.callback_query(F.data.startswith("sub:renew:"))
+async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
+    await callback.answer()
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    amount = calculate_renew(sub=sub, time=1, devices=sub.hwid_device_limit)
+    if await state.get_state() == RenewSubState.wait_changes:
+        data = await state.get_data()
+    else:
+        await state.set_state(RenewSubState.wait_changes)
+        data = {
+                "sub": sub.uuid,
+                "devices": sub.hwid_device_limit,
+                "time": 1,
+                "back": f"sub:{short_uuid}",
+                "amount": amount
+            }
+        await state.update_data(data)
+
+    text = Text.sub_renew(data)
+    keyboard = kb.sub_renew(sub)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
 
 @payment_router.callback_query(F.data == "buy_sub")
 async def buy_sub(callback: CallbackQuery, state: FSMContext):
@@ -46,7 +82,9 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
     time = int(callback.data.split("_")[-1])
     await state.set_state(BuySubState.wait_devices)
     amount = price_list["time"][time]
-    await state.set_data({"time": time, "devices": 1, "amount": amount, "sub": "new"})
+    await state.set_data(
+        {"time": time, "devices": 1, "amount": amount, "sub": "new", "back": "buy_dev_1"}
+    )
 
     text = Text.buy_devices(time)
     keyboard = await kb.buy_devices(state)
@@ -72,8 +110,8 @@ async def buy_dev(callback: CallbackQuery, state: FSMContext):
         )
     await state.set_state(BuySubState.wait_devices)
     await callback.answer()
-    amount = price_list["time"][data["time"]] + price_list["device"][data["time"]] * (devices - 1)
-    await state.update_data({"devices": devices, "amount": amount})
+    amount = calculate_buy(time=data["time"], devices=devices)
+    await state.update_data({"devices": devices, "amount": amount, "back": callback.data})
 
     text = Text.buy_devices(data["time"])
     keyboard = await kb.buy_devices(state)
@@ -83,29 +121,27 @@ async def buy_dev(callback: CallbackQuery, state: FSMContext):
         reply_markup=keyboard
     )
 
-@payment_router.callback_query(F.data == "pay_sub")
-async def pay_sub(callback: CallbackQuery, state: FSMContext):
+@payment_router.callback_query(F.data == "payment_method")
+async def pay_sub(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
     data = await state.get_data()
 
-    if data.get("sub") is None or data.get("amount") is None \
-        or data.get("devices") is None or data.get("time") is None:
-        return await callback.answer(
-            text=Text.state_error(),
+    if not validate_payment_state_data(data):
+        await callback.answer(
+            text=Text.state_error,
             show_alert=True
         )
-    
+
     await state.set_state(Payment.wait_for_method)
     
     await callback.answer()
 
-    text = Text.payment(data["amount"])
-    keyboard = kb.payment(back=f"buy_dev_{data["devices"]}")
+    text = Text.payment_method(data["amount"])
+    keyboard = kb.payment_method(back=data.get("back"))
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
-
 
 @payment_router.callback_query(TopUpState.wait_amount, F.data.startswith("top_up_"))
 async def top_up_amount(callback: CallbackQuery, state: FSMContext):
@@ -114,13 +150,12 @@ async def top_up_amount(callback: CallbackQuery, state: FSMContext):
     amount = int(callback.data.split("_")[-1])
     await state.set_state(Payment.wait_for_method)
     await state.update_data(amount=amount)
-    text = Text.payment()
-    keyboard = kb.payment(back="top_up")
+    text = Text.payment_method(amount)
+    keyboard = kb.payment_method(back="top_up")
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
         reply_markup=keyboard
     )
-
 
 @payment_router.callback_query(F.data == "top_up")
 async def top_up(callback: CallbackQuery, state: FSMContext):
@@ -146,8 +181,8 @@ async def top_up_amount(message: Message, state: FSMContext):
     else:
         await state.set_state(Payment.wait_for_method)
         await state.update_data(amount=int(amount))
-        text = Text.payment()
-        keyboard = kb.payment(back="top_up")
+        text = Text.payment_method(amount)
+        keyboard = kb.payment_method(back="top_up")
 
     await message.bot.edit_message_text(
             rich_message=InputRichMessage(markdown=text),

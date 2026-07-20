@@ -122,6 +122,7 @@ async def handling_webhook(body: Dict[str, Any], session: AsyncSession) -> Dict[
     data = payload.copy()
     data.pop("user_id", None)
     data.pop("type", None)
+    data.pop("excepted_amount", None)
 
     payment = await db.create_payment(
         session=session,
@@ -134,7 +135,7 @@ async def handling_webhook(body: Dict[str, Any], session: AsyncSession) -> Dict[
         payment_type=type,
         status=status,
         data=data
-        )
+    )
 
     logger.info(f"✅ Платеж {transaction_id} сохранен в БД для пользователя {user_id}")
 

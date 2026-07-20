@@ -5,8 +5,6 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-import uuid as uuid_lib
-import asyncio
 
 from telegram.filters import ChatTypeFilter, IsBlocked
 from database.models import User

@@ -27,11 +27,18 @@ class Text:
             f'> 3 месяца - от {price_list["time"][3]}₽  \n'
             f'> 6 месяцев - от {price_list["time"][6]}₽'
         )
-
-    def payment(amount: int):
+    
+    def payment_method(amount: int):
         return (
             f"## ![💳](tg://emoji?id=5445353829304387411) Оплата {amount}₽\n\n"
             "Выберите удобный способ оплаты ниже"
+        )
+
+
+    def payment(amount: int):
+        return (
+            f"## С вас {amount}₽\n\n"
+            "Оплатите по ссылке ниже"
         )
 
     def info():
@@ -100,7 +107,15 @@ class Text:
             f"> ![🛂](tg://emoji?id=5877318502947229960) Устройства: {devices}"
         )
         return text
+    
+    def sub_renew(data: dict):
+        text = (
+            "## ![🛂](tg://emoji?id=5258096772776991776) Параметры продления  \n\n"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Срок продления: {data['time']} \n"
+            f"> ![🛂](tg://emoji?id=5877318502947229960) Устройства: {data['devices']}  \n\n"
+        )
 
+        return text
     def admin_menu():
         return (
             "## ![🛂](tg://emoji?id=5258096772776991776) Панель админа"

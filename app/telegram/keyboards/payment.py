@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from sqlalchemy.ext.asyncio import AsyncSession
-from database.models import User
+from database.models import User, Subscription
 
 def buy_sub():
     keyboard = InlineKeyboardBuilder()
@@ -28,30 +28,35 @@ async def buy_devices(state: FSMContext):
         )
 
     keyboard.add(
-        InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5445353829304387411", callback_data="pay_sub"),
+        InlineKeyboardButton(text=f"Оплатить {data['amount']}₽", icon_custom_emoji_id="5445353829304387411", callback_data="payment_method"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=f"buy_sub")   
     )
 
     keyboard.adjust(2, 2, 2, 1, 1)
     return keyboard.as_markup()
 
-def cryptopay_invoice(url: str, amount: int) -> InlineKeyboardMarkup:
+def payment_method(back: str) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text=f"Оплатить {amount}₽", icon_custom_emoji_id="5258513401784573443", url=url),
-        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu")
+        InlineKeyboardButton(text="СБП", icon_custom_emoji_id="5363972466857252756", callback_data="12345"),
+        InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5361914370068613491", callback_data="12345"),
+        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5897792062291449826", callback_data="12345"),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back),
     )
-    keyboard.adjust(1, 1)
+
+    keyboard.adjust(1, 1, 1, 1)
+    
     return keyboard.as_markup()
 
-def invoice_paid() -> InlineKeyboardMarkup:
+def payment(url: str, back="payment_method"):
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu")
+        InlineKeyboardButton(text="Оплатить", icon_custom_emoji_id="5258420634785947640", url=url),
+        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back)
     )
-    keyboard.adjust(1)
+    keyboard.adjust(1, 1)
     return keyboard.as_markup()
 
 def top_up() -> InlineKeyboardMarkup:
@@ -69,26 +74,13 @@ def top_up() -> InlineKeyboardMarkup:
 
     return keyboard.as_markup()
 
-def payment(back: str) -> InlineKeyboardMarkup:
+def sub_renew(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="СБП", icon_custom_emoji_id="5363972466857252756", callback_data="12345"),
-        InlineKeyboardButton(text="CryptoBot", icon_custom_emoji_id="5361914370068613491", callback_data="12345"),
-        InlineKeyboardButton(text="Telegram Stars", icon_custom_emoji_id="5897792062291449826", callback_data="12345"),
-        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data=back),
+        InlineKeyboardButton(text="Оплатить", callback_data="payment_method", icon_custom_emoji_id="5445353829304387411"),
+        InlineKeyboardButton(text="Устройства", callback_data="dev_renew", icon_custom_emoji_id="5445353829304387411"),
+        InlineKeyboardButton(text="Срок продления", callback_data="month_renew", icon_custom_emoji_id="5445353829304387411"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
     )
-
-    keyboard.adjust(1, 1, 1, 1)
-    
-    return keyboard.as_markup()
-
-def pay_stars(price: int, invoice_link: str) -> InlineKeyboardMarkup:
-    keyboard = InlineKeyboardBuilder()
-    keyboard.add(
-        InlineKeyboardButton(text=f"Pay {price}⭐️",url=invoice_link, icon_custom_emoji_id="5260416304224936047"),
-        InlineKeyboardButton(text="Назад", callback_data="top_up", icon_custom_emoji_id="5258236805890710909")
-    )
-    keyboard.adjust(1)
-    return keyboard.as_markup()
 

@@ -103,7 +103,7 @@ def sub_menu(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Продлить", callback_data="renew_sub", icon_custom_emoji_id="5776213190387961618"),
+        InlineKeyboardButton(text="Продлить", callback_data=f"sub:renew:{sub.short_uuid}", icon_custom_emoji_id="5776213190387961618"),
         InlineKeyboardButton(text="Копировать ссылку", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5258477770735885832"),
         InlineKeyboardButton(text="Устройства", callback_data=f"sub:dev:{sub.short_uuid}", icon_custom_emoji_id="5877318502947229960"),
         InlineKeyboardButton(text="Настройки", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258096772776991776"),

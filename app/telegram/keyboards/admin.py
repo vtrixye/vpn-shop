@@ -46,13 +46,3 @@ def users_stats() -> InlineKeyboardMarkup:
     )
     keyboard.adjust(1, 1)
     return keyboard.as_markup()
-
-def test_payment(url: str):
-    keyboard = InlineKeyboardBuilder()
-
-    keyboard.add(
-        InlineKeyboardButton(text="Оплатить", icon_custom_emoji_id="5258420634785947640", url=url),
-        InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="admin_menu")
-    )
-    keyboard.adjust(1, 1)
-    return keyboard.as_markup()

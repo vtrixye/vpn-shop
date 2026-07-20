@@ -1,5 +1,4 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from aiogram import Bot
 from aiogram.types import InputRichMessage
 
 from database.models import Payment
