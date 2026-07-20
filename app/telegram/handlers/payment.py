@@ -47,7 +47,7 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
     else:
         await state.set_state(RenewSubState.wait_changes)
         data = {
-                "sub": sub.uuid,
+                "sub": str(sub.uuid),
                 "devices": sub.hwid_device_limit,
                 "time": 1,
                 "back": f"sub:{short_uuid}",
