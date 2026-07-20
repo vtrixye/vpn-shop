@@ -42,6 +42,7 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
     sub = await session.scalar(stmt)
 
     amount = calculate_renew(sub=sub, time=1, devices=sub.hwid_device_limit)
+    logger.info(f"Цена вычислена {amount}")
     if await state.get_state() == RenewSubState.wait_changes:
         data = await state.get_data()
     else:
@@ -83,7 +84,8 @@ async def buy_month(callback: CallbackQuery, state: FSMContext):
     await state.set_state(BuySubState.wait_devices)
     amount = price_list["time"][time]
     await state.set_data(
-        {"time": time, "devices": 1, "amount": amount, "sub": "new", "back": "buy_dev_1"}
+        {"time": time, "devices": 1, "type": "sub_purchase",
+         "amount": amount, "sub": "new", "back": "buy_dev_1"}
     )
 
     text = Text.buy_devices(time)
@@ -127,7 +129,7 @@ async def pay_sub(callback: CallbackQuery, state: FSMContext, session: AsyncSess
 
     if not validate_payment_state_data(data):
         await callback.answer(
-            text=Text.state_error,
+            text=Text.state_error(),
             show_alert=True
         )
 

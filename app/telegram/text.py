@@ -116,6 +116,7 @@ class Text:
         )
 
         return text
+
     def admin_menu():
         return (
             "## ![🛂](tg://emoji?id=5258096772776991776) Панель админа"
