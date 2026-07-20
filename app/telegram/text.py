@@ -111,7 +111,7 @@ class Text:
     def sub_renew(data: dict):
         text = (
             "## ![🛂](tg://emoji?id=5258096772776991776) Параметры продления  \n\n"
-            f"> ![🛂](tg://emoji?id=5936017305585586269) Срок продления: {data['time']} \n"
+            f"> ![🛂](tg://emoji?id=5936017305585586269) Срок продления: {data['time']}  \n"
             f"> ![🛂](tg://emoji?id=5877318502947229960) Устройства: {data['devices']}  \n\n"
         )
 

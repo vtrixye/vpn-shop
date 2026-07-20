@@ -57,7 +57,7 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
         await state.update_data(data)
 
     text = Text.sub_renew(data)
-    keyboard = kb.sub_renew(sub)
+    keyboard = kb.sub_renew(sub, amount)
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),
