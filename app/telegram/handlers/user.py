@@ -195,10 +195,8 @@ async def trans(callback: CallbackQuery, session: AsyncSession):
         reply_markup=keyboard
     )    
 
-
-
-@user_router.callback_query(F.data.startswith("sub:opt:"))
-async def sub_opt(callback: CallbackQuery, session: AsyncSession):
+@user_router.callback_query(F.data.startswith("sub:revoke:"))
+async def sub_revoke(callback: CallbackQuery, session: AsyncSession):
     await callback.answer()
     short_uuid = callback.data.split(":")[-1]
 
@@ -207,7 +205,57 @@ async def sub_opt(callback: CallbackQuery, session: AsyncSession):
 
     if not(await rw.check_callback(callback.from_user.id, sub)):
         return
+    
+    text = Text.sub_revoke()
+    keyboard = kb.sub_revoke(sub)
 
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@user_router.callback_query(F.data.startswith("revoke:"))
+async def revoke(callback: CallbackQuery, session: AsyncSession):
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+    
+    new = await rw.sub_revoke(sub)
+    if not new:
+        return await callback.answer(
+            text = Text.unknown_error(),
+            show_alert=True
+        )
+    
+    await callback.answer()
+
+    text = Text.revoke()
+    keyboard = kb.revoke(new)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+
+@user_router.callback_query(F.data.startswith("sub:opt:"))
+async def sub_opt(callback: CallbackQuery, session: AsyncSession):
+    short_uuid = callback.data.split(":")[-1]
+
+    stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
+    sub = await session.scalar(stmt)
+
+    if not(await rw.check_callback(callback.from_user.id, sub)):
+        return
+
+    if sub.tag == "TRIAL":
+        return await callback.answer(text="Недоступно для пробной подписки", show_alert=True)
+    
+    await callback.answer()
     text = Text.sub_opt()
     keyboard = kb.sub_opt(sub)
 

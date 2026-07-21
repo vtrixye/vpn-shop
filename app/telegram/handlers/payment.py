@@ -4,6 +4,7 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+import uuid as uuid_lib
 
 from database.models import Subscription
 from telegram.text import Text
@@ -58,6 +59,28 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
 
     text = Text.sub_renew(data)
     keyboard = kb.sub_renew(sub, amount)
+
+    await callback.message.edit_text(
+        rich_message=InputRichMessage(markdown=text),
+        reply_markup=keyboard
+    )
+
+@payment_router.callback_query(F.data == "dev_renew")
+async def dev_renew(callback: CallbackQuery, state: FSMContext, session: AsyncSession):
+    data = await state.get_data()
+
+    if not validate_payment_state_data(data):
+        await callback.answer(
+            text=Text.state_error(),
+            show_alert=True
+        )
+
+    sub = await session.get(Subscription, uuid_lib.UUID(data["sub"]))
+
+    amount = calculate_add_device(sub)
+
+    text = Text.dev_renew(amount)
+    keyboard = kb.dev_renew(sub)
 
     await callback.message.edit_text(
         rich_message=InputRichMessage(markdown=text),

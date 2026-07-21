@@ -126,6 +126,29 @@ def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.adjust(1, 1, 1, 1)
     return keyboard.as_markup()
 
+def sub_revoke(sub: Subscription):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Сбросить ссылку", callback_data=f"revoke:{sub.short_uuid}", icon_custom_emoji_id="5877465816030515018"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
+
+    keyboard.adjust(1, 1)
+
+    return keyboard.as_markup()  
+
+def revoke(sub: Subscription):
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.add(
+        InlineKeyboardButton(text="Копировать ссылку", copy_text=CopyTextButton(text=sub.subscription_url), icon_custom_emoji_id="5258477770735885832"),
+        InlineKeyboardButton(text="Назад", callback_data=f"sub:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
+    )
+
+    keyboard.adjust(1, 1)
+    return keyboard.as_markup()
+
 def sub_trans(sub: Subscription):
     keyboard = InlineKeyboardBuilder()
 

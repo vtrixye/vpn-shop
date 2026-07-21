@@ -84,6 +84,8 @@ async def update_sub(
     ) -> None:
     sub = await session.get(Subscription, user.uuid)
 
+    sub.short_uuid = user.short_uuid
+    sub.subscription_url = user.subscription_url
     sub.status = user.status
     sub.traffic_limit_bytes = user.traffic_limit_bytes
     sub.traffic_limit_strategy = user.traffic_limit_strategy

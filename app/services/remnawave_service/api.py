@@ -147,3 +147,11 @@ async def delete_device(uuid: str, hwid: str):
     except Exception as e:
         logger.error(f"Ошибка удаления устройства: \n{e}")
         return False
+    
+async def sub_revoke(sub: Subscription):
+    try:
+        new = await remnawave.users.revoke_user_subscription(str(sub.uuid))
+        return new
+    except Exception as e:
+        logger.error(f"Ошибка сброса ссылки \n{e}")
+        return None
