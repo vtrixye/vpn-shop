@@ -53,7 +53,8 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
                 "devices": sub.hwid_device_limit,
                 "time": 1,
                 "back": f"sub:{short_uuid}",
-                "amount": amount
+                "amount": amount,
+                "type": "sub_renewal"
             }
         await state.update_data(data)
 
@@ -70,7 +71,7 @@ async def dev_renew(callback: CallbackQuery, state: FSMContext, session: AsyncSe
     data = await state.get_data()
 
     if not validate_payment_state_data(data):
-        await callback.answer(
+        return await callback.answer(
             text=Text.state_error(),
             show_alert=True
         )
@@ -151,7 +152,7 @@ async def pay_sub(callback: CallbackQuery, state: FSMContext, session: AsyncSess
     data = await state.get_data()
 
     if not validate_payment_state_data(data):
-        await callback.answer(
+        return await callback.answer(
             text=Text.state_error(),
             show_alert=True
         )

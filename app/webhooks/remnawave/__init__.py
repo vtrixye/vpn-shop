@@ -2,7 +2,9 @@ import os
 import json
 import hmac
 import hashlib
+import inspect
 
+from typing import Optional
 from fastapi import APIRouter, Depends, Request, HTTPException
 from remnawave.models.webhook import WebhookPayloadDto, UserDto, NodeDto
 
@@ -51,9 +53,16 @@ remnawave_router = APIRouter(
 
 def remnawave_handler(event_name: str):
     def decorator(func):
-        async def wrapper(data):
+        sig = inspect.signature(func)
+        params = list(sig.parameters.values())
+        has_meta = len(params) > 2
+
+        async def wrapper(data, meta: Optional[dict] = None):
             async with session_maker() as session:
-                return await func(session, data)
+                if has_meta:
+                    return await func(session, data, meta)
+                else:
+                    return await func(session, data)
         
         remnawave_handler._handlers[event_name] = wrapper
         return wrapper
@@ -81,8 +90,9 @@ async def remnawave_webhook(payload=Depends(validate_webhook)):
     
     try:
         parsed = WebhookPayloadDto(**payload)
+        meta = payload.get("meta")
         typed_data = _to_dto(event, parsed.data)
-        await handler(typed_data)
+        await handler(typed_data, meta)
     except Exception:
         logger.exception(f"Error handling event: {event}")
         return {"ok": True}

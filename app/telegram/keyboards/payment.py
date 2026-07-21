@@ -79,8 +79,8 @@ def sub_renew(sub: Subscription, amount: int) -> InlineKeyboardMarkup:
 
     keyboard.add(
         InlineKeyboardButton(text=f"Оплатить {amount}₽", callback_data="payment_method", icon_custom_emoji_id="5445353829304387411"),
-        InlineKeyboardButton(text="Устройства", callback_data="dev_renew", icon_custom_emoji_id="5445353829304387411"),
-        InlineKeyboardButton(text="Срок продления", callback_data="month_renew", icon_custom_emoji_id="5445353829304387411"),
+        InlineKeyboardButton(text="Устройства", callback_data="dev_renew", icon_custom_emoji_id="5877318502947229960"),
+        InlineKeyboardButton(text="Срок продления", callback_data="month_renew", icon_custom_emoji_id="5778605968208170641"),
         InlineKeyboardButton(text="Назад", callback_data=f"sub:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
     )
 

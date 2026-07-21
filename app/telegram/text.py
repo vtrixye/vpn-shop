@@ -71,7 +71,7 @@ class Text:
     
     def sub_revoke():
         return (
-            "## ![]() Сброс ссылки\n\n"
+            "## ![](tg://emoji?id=5447644880824181073) Сброс ссылки\n\n"
             "> ![🛂](tg://emoji?id=5447644880824181073) Обратите внимание  \n"
             "> При сбросе ссылки ваше текущее подключение может оборваться!"
         )
@@ -263,6 +263,12 @@ class Text:
             f"Время действия подписки `{sub.username}` подошло к концу."
         )
     
+    def user_expiration(sub: Subscription, offset: int):
+        return (
+            f"## ![🚨](tg://emoji?id=5458603043203327669) Внимание\n\n"
+            f"Подписка `{sub.username}` истекает через **{abs(offset)} часа**!"
+        )            
+
     def user_expires_in_24_hours(sub: Subscription):
         return (
             f"## ![🚨](tg://emoji?id=5458603043203327669) Внимание\n\n"

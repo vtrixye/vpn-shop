@@ -324,7 +324,7 @@ async def delete_device(callback: CallbackQuery, state: FSMContext, session: Asy
             "Устройство удалено!"
         )
     else:
-        await callback.answer(
+        return await callback.answer(
             text=Text.state_error(),
             show_alert=True
         )
