@@ -60,6 +60,7 @@ def remnawave_handler(event_name: str):
         async def wrapper(data, meta: Optional[dict] = None):
             async with session_maker() as session:
                 if has_meta:
+                    logger.info("decorator wrapper meta")
                     return await func(session, data, meta)
                 else:
                     return await func(session, data)

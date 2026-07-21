@@ -73,9 +73,9 @@ async def user_expired(session: AsyncSession, user: UserDto):
 @remnawave_handler("user.expiration")
 async def handle_expiration(session: AsyncSession, user: UserDto, meta: dict):
     offset = meta.get("expiration")
+    logger.info(f"handling expiration {offset}")
     if offset is None or offset != -24:
         return
-    
     if user.tag == "TRIAL":
         return
     
