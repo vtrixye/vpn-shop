@@ -119,8 +119,6 @@ class Text:
             f"> ![🛂](tg://emoji?id=5936017305585586269) Имя: {sub.username}  \n"
             f"> ![🛂](tg://emoji?id=5776213190387961618) Истекает через: {remaining}  \n"
             f"> ![🛂](tg://emoji?id=5877318502947229960) Устройства: {devices}  \n"
-            "Чтобы поделючиться, вставьте ссылку в ваше приложение ![](tg://emoji?id=5407020537518005301)"
-            "![](tg://emoji?id=5407031047302980648)![](tg://emoji?id=5406608388161314263)"
         )
         return text
     
@@ -272,11 +270,6 @@ class Text:
             f"Подписка `{sub.username}` истекает через **{abs(offset)} часа**!"
         )            
 
-    def user_expires_in_24_hours(sub: Subscription):
-        return (
-            f"## ![🚨](tg://emoji?id=5458603043203327669) Внимание\n\n"
-            f"Подписка `{sub.username}` истекает через **24 часа**!"
-        )
     
     def node_connection_lost(node: NodeDto):
         return f"🚨 **Потеряно соединение!**\n\nНода: `{node.name}` недоступна."
@@ -301,12 +294,6 @@ class Text:
         return (
             "## ![💳](tg://emoji?id=5190741648237161191) Пополнение баланса\n\n"
             "Введите сумму пополнения в рублях *(минимум 100)*:"
-        )
-    
-    def pay_stars():
-        return (
-            "## ![💳](tg://emoji?id=5445353829304387411) Telegram Stars\n\n"
-            "Оплатите по ссылке ниже"
         )
     
     def state_error():
