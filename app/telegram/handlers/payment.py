@@ -42,6 +42,12 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
     sub = await session.scalar(stmt)
 
+    if sub.tag == "UNLIMITED":
+        return await callback.answer(
+            text="Ваша подиска уже безлимитная",
+            show_alert=True
+        )
+
     amount = calculate_renew(sub=sub, time=1, devices=sub.hwid_device_limit)
     logger.info(f"Цена вычислена {amount}")
     if await state.get_state() == RenewSubState.wait_changes:

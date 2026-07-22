@@ -43,7 +43,7 @@ def info() -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Политика конфиденциальности", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Politika-konfidencialnosti-06-21-31"),
         InlineKeyboardButton(text="Пользовательское соглашение", icon_custom_emoji_id="5956561916573782596", url="https://telegra.ph/Polzovatelskoe-soglashenie-04-01-19"),
-        InlineKeyboardButton(text="Поддержка", icon_custom_emoji_id="5884123981706956210", url="https://t.me/test111support"),
+        InlineKeyboardButton(text="Поддержка", icon_custom_emoji_id="5884123981706956210", url="https://t.me/GrapeVpnSupport"),
         InlineKeyboardButton(text="Назад", icon_custom_emoji_id="5258236805890710909", callback_data="main_menu"),
     )
 
@@ -119,7 +119,7 @@ def sub_opt(sub: Subscription) -> InlineKeyboardMarkup:
     keyboard.add(
         InlineKeyboardButton(text="Протоколы", callback_data=f"sub:sq:{sub.short_uuid}", icon_custom_emoji_id="5875431869842985304"),
         InlineKeyboardButton(text="Передать подписку", callback_data=f"sub:trans:{sub.short_uuid}", icon_custom_emoji_id="5954175920506933873"),
-        InlineKeyboardButton(text="Сброс ссылки", callback_data=f"sub:revoke:{sub.short_uuid}", icon_custom_emoji_id="5877465816030515018"),
+        InlineKeyboardButton(text="Сброс ссылки", callback_data=f"sub:revoke:{sub.short_uuid}", icon_custom_emoji_id="5346269127059196142"),
         InlineKeyboardButton(text="Назад", callback_data=f"sub:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
     )
 
@@ -130,7 +130,7 @@ def sub_revoke(sub: Subscription):
     keyboard = InlineKeyboardBuilder()
 
     keyboard.add(
-        InlineKeyboardButton(text="Сбросить ссылку", callback_data=f"revoke:{sub.short_uuid}", icon_custom_emoji_id="5877465816030515018"),
+        InlineKeyboardButton(text="Сбросить ссылку", callback_data=f"revoke:{sub.short_uuid}", icon_custom_emoji_id="5346269127059196142"),
         InlineKeyboardButton(text="Назад", callback_data=f"sub:opt:{sub.short_uuid}", icon_custom_emoji_id="5258236805890710909")
     )
 
