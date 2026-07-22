@@ -56,12 +56,10 @@ def remnawave_handler(event_name: str):
         sig = inspect.signature(func)
         params = list(sig.parameters.values())
         has_meta = len(params) > 2
-        logger.info(f"Registering {event_name}, has_meta={has_meta}")
 
         async def wrapper(data, meta: Optional[dict] = None):
             async with session_maker() as session:
                 if has_meta:
-                    logger.info("decorator wrapper meta")
                     return await func(session, data, meta)
                 else:
                     return await func(session, data)
@@ -87,14 +85,12 @@ async def remnawave_webhook(payload=Depends(validate_webhook)):
         return {"ok": False}
 
     handler = remnawave_handler._handlers.get(event)
-    logger.info(f"Webhook event: {event}, handler found: {handler is not None}")
     if not handler:
         return {"ok": True}
     
     try:
         parsed = WebhookPayloadDto(**payload)
         meta = payload.get("meta")
-        logger.info(f"meta received: {meta}")
         typed_data = _to_dto(event, parsed.data)
         await handler(typed_data, meta)
     except Exception:
