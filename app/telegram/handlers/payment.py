@@ -36,7 +36,6 @@ class Payment(StatesGroup):
 
 @payment_router.callback_query(F.data.startswith("sub:renew:"))
 async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMContext):
-    await callback.answer()
     short_uuid = callback.data.split(":")[-1]
 
     stmt = select(Subscription).where(Subscription.short_uuid == short_uuid)
@@ -47,6 +46,8 @@ async def sub_renew(callback: CallbackQuery, session: AsyncSession, state: FSMCo
             text="Ваша подиска уже безлимитная",
             show_alert=True
         )
+
+    await callback.answer()
 
     amount = calculate_renew(sub=sub, time=1, devices=sub.hwid_device_limit)
     logger.info(f"Цена вычислена {amount}")
